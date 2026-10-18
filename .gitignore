@@ -1,0 +1,15 @@
+out/
+*.pdb
+*.lib
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Local Python caches
+__pycache__/
+*.py[cod]
+
+# Relay 1 files from Hugging Face (sealresearch/relay), for the demo and the tests
+relay-model/
+# local toolchain
+.tools/

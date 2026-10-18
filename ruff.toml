@@ -1,0 +1,5 @@
+# Python formatting (tools/format.mjs). Files pinned by package fingerprints are skipped.
+line-length = 120
+
+[format]
+quote-style = "preserve"

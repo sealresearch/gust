@@ -1,0 +1,19 @@
+# Line endings: every text file is stored and checked out with LF on every platform, so file bytes
+# (and therefore every sha256 pinned by a package) never depend on the OS or core.autocrlf.
+* text=auto eol=lf
+
+# Binary artifacts: never diff, merge, or convert.
+*.gust binary
+*.gustw binary
+*.wasm binary
+*.dll binary
+*.exe binary
+*.obj binary
+*.npy binary
+*.npz binary
+*.png binary
+*.jpg binary
+*.wav binary
+*.bin binary
+*.i8 binary
+*.f32 binary

@@ -1,0 +1,18 @@
+# C/C++ style for runtime/ and compiler/ (tools/format.mjs). Files pinned by package fingerprints are skipped.
+BasedOnStyle: LLVM
+IndentWidth: 4
+ContinuationIndentWidth: 4
+ColumnLimit: 120
+# Unity translation units (runtime/gust.c, compiler/graph.cpp) include their units in a fixed order.
+SortIncludes: Never
+IncludeBlocks: Preserve
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: true
+AlignConsecutiveMacros: Consecutive
+PointerAlignment: Right
+NamespaceIndentation: None
+FixNamespaceComments: true
+ReflowComments: false
