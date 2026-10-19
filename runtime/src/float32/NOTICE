@@ -1,0 +1,71 @@
+float32-graph-v1 third-party notices
+====================================
+
+runtime/src/float32/math.c contains ports of single-precision math routines from musl libc 1.2.5
+(https://musl.libc.org, MIT license) and, through musl, from the FreeBSD msun library (Sun Microsystems notice).
+Nothing else in runtime/src/float32/ is third-party code.
+
+Where the sources came from
+---------------------------
+The files were read from the musl 1.2.5 tree that ships inside the Zig 0.14.1 toolchain used to build this
+repository (lib/libc/musl/); no code was downloaded for this change.
+Canonical upstream locations of the same files (not fetched here):
+
+  musl 1.2.5      https://git.musl-libc.org/cgit/musl/tree/src/math/<file>?h=v1.2.5
+  FreeBSD msun    https://cgit.freebsd.org/src/tree/lib/msun/src/<s_erff.c | s_expm1f.c | s_tanhf.c>
+  Arm optimized   https://github.com/ARM-software/optimized-routines  (math/expf.c, math/exp2f_data.c)
+
+Files ported (sha256 of the copies read, under lib/libc/musl/):
+
+  225123b9b3a47a083c06f2580c6b73d5cadae5cec545f9e928f7041ff837b4b4  src/math/expf.c        (Arm Limited, MIT)
+  3da38c471cc5eb8dc1c2e283c6c00a36b1d353ba5c8ca1e82d95180948e26bd5  src/math/exp2f_data.c  (Arm Limited, MIT)
+  fb52b690bef63df2e8996f2d2b3fd77f9ea08795863e73afdc882df04460e850  src/math/exp2f_data.h
+  a7d4e8f8b41f04d4b977deb59e6bf96067371387062a5987fcc3b4464f54f5e9  src/math/expm1f.c     (FreeBSD s_expm1f.c)
+  4787b2f6be28bb2ae9721d510b12d2b9aebf96a594f26f25a3dc267f029800df  src/math/tanhf.c      (FreeBSD s_tanhf.c)
+  876ad823d25e58330628ccdc5d24a3f10cc255135046a4e2903daf33cb75c18f  src/math/erff.c       (FreeBSD s_erff.c)
+  d5a11757541471030d8f4bf7a39a29de35732ecbb291b2f45bf03296be4f25a2  src/internal/libm.h   (helper macros, replaced)
+  f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af  COPYRIGHT             (musl license text)
+
+Changes: the libm helper macros are replaced by local inline functions (gf_asuint, gf_asfloat, ...), the FORCE_EVAL
+calls (they only raise the inexact flag) are dropped, __math_oflowf(0) and __math_uflowf(0) are written as their
+results (+infinity and +0), double_t and float_t are fixed to double and float, and the functions are renamed with a
+gf_ prefix and made static. Polynomial coefficients, tables, thresholds and evaluation order are unchanged.
+
+License texts
+-------------
+
+musl as a whole is licensed under the following standard MIT license:
+
+  Copyright (c) 2005-2020 Rich Felker, et al.
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+  documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+  the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+  to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+  the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+  CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+  IN THE SOFTWARE.
+
+expf and exp2f_data (single-precision e^x):
+
+  Copyright (c) 2017-2018, Arm Limited.
+  SPDX-License-Identifier: MIT
+
+erff, expm1f and tanhf (origin: FreeBSD /usr/src/lib/msun/src/s_erff.c, s_expm1f.c, s_tanhf.c):
+
+  Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+
+  ====================================================
+  Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+
+  Developed at SunPro, a Sun Microsystems, Inc. business.
+  Permission to use, copy, modify, and distribute this
+  software is freely granted, provided that this notice
+  is preserved.
+  ====================================================
