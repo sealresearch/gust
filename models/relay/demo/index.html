@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relay sandbox · 11.5 MB tool calling in your browser</title>
+<style>
+  :root { --bg:#0a0a0c; --panel:#111115; --line:#24242b; --ink:#f2f2f4; --mute:#8b8b96; --acc:#ff4d4f; --ok:#3ecf8e; --warn:#f5a524;
+          --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 Inter, system-ui, -apple-system, Segoe UI, sans-serif; }
+  header.top { display:flex; align-items:center; gap:14px; padding:18px 28px; border-bottom:1px solid var(--line); }
+  header.top h1 { font-size:18px; margin:0; letter-spacing:-.01em; }
+  header.top .sub { color:var(--mute); font-size:12px; }
+  .grow { flex:1; }
+  .badge { font:11px var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--mute); border:1px solid var(--line); padding:6px 10px; border-radius:8px; white-space:nowrap; }
+  .badge.ok { color:var(--ok); } .badge.err { color:var(--acc); }
+  button, select { font:inherit; color:var(--ink); background:#18181d; border:1px solid var(--line); border-radius:9px; padding:8px 12px; cursor:pointer; }
+  button:hover:not(:disabled), select:hover { border-color:#3a3a44; }
+  button:disabled { opacity:.45; cursor:default; }
+  button.primary { background:var(--ink); color:#000; border-color:var(--ink); font-weight:600; }
+  main { display:grid; grid-template-columns: minmax(0, 57fr) minmax(0, 43fr); gap:22px; padding:22px 28px 10px; }
+  @media (max-width: 920px) { main { grid-template-columns: 1fr; } }
+  .label { font:11px var(--mono); text-transform:uppercase; letter-spacing:.08em; color:var(--mute); margin:0 0 8px; display:flex; align-items:center; gap:8px; }
+  .label .r { margin-left:auto; text-transform:none; letter-spacing:0; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; }
+  #stage { aspect-ratio: 560/460; width:100%; overflow:hidden; }
+  #stage svg { width:100%; height:100%; display:block; }
+  #stage svg * { transition: opacity .35s, fill .35s; }
+  textarea, input[type=text] { width:100%; font:12px/1.5 var(--mono); color:var(--ink); background:#0d0d10; border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  textarea { height:190px; resize:vertical; }
+  input[type=text] { font:14px Inter, system-ui, sans-serif; padding:11px 12px; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .tabs { display:flex; gap:4px; margin-bottom:8px; }
+  .tabs button { padding:5px 10px; font-size:12px; border-radius:7px; background:transparent; }
+  .tabs button.on { background:#1f1f26; border-color:#3a3a44; }
+  #out { min-height:170px; max-height:330px; overflow:auto; padding:12px 14px; font:12px/1.55 var(--mono); white-space:pre-wrap; word-break:break-word; }
+  .k { color:#9aa4ff; } .s { color:#b5e48c; } .n { color:#ffd166; } .dim { color:var(--mute); }
+  .why-text { font:15px/2.1 Inter, system-ui, sans-serif; white-space:normal; }
+  .why-text mark { background:color-mix(in srgb, var(--c) 28%, transparent); color:var(--ink); border-bottom:2px solid var(--c); border-radius:3px; padding:1px 2px; }
+  .why-text mark sub { font:9px var(--mono); color:var(--c); margin-left:3px; }
+  .why-list { margin-top:10px; font:12px var(--mono); }
+  .why-list div { padding:3px 0; border-top:1px dashed var(--line); }
+  .bar { display:grid; grid-template-columns: 150px 1fr 54px; gap:8px; align-items:center; font:11px var(--mono); margin:3px 0; }
+  .bar .t { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bar .b { height:8px; border-radius:4px; background:#2a2a33; position:relative; }
+  .bar .b i { position:absolute; left:0; top:0; bottom:0; border-radius:4px; background:var(--mute); }
+  .bar.called .b i { background:var(--acc); } .bar.called .t { color:var(--ink); font-weight:600; }
+  #confirm { display:none; margin-top:10px; padding:12px 14px; border:1px solid var(--acc); background:color-mix(in srgb, var(--acc) 10%, transparent); border-radius:12px; }
+  #confirm .row { margin-top:8px; } #confirm button.go { background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600; }
+  #chips { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  #chips button { text-align:left; padding:9px 11px; border-radius:10px; }
+  #chips b { display:block; font-size:13px; } #chips span { display:block; font:10px var(--mono); text-transform:uppercase; letter-spacing:.06em; color:var(--mute); margin-top:2px; }
+  #stats { font:11px var(--mono); color:var(--mute); margin-top:8px; min-height:16px; }
+  .mic.on { border-color:var(--acc); color:var(--acc); }
+  footer { padding:14px 28px 26px; color:var(--mute); font-size:12px; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  footer .dot { width:8px; height:8px; border-radius:50%; background:var(--acc); display:inline-block; margin-right:6px; }
+  .menu { position:relative; }
+  .menu .list { display:none; position:absolute; z-index:5; top:42px; left:0; width:300px; background:#141418; border:1px solid var(--line); border-radius:12px; padding:6px; box-shadow:0 12px 40px #000a; }
+  .menu.open .list { display:block; }
+  .menu .list button { display:block; width:100%; text-align:left; border:0; background:transparent; padding:8px 10px; border-radius:8px; }
+  .menu .list button:hover, .menu .list button.cur { background:#1f1f26; }
+  .menu .list small { display:block; color:var(--mute); font-size:11px; }
+  .opts { display:flex; gap:14px; align-items:center; font-size:12px; color:var(--mute); margin-top:8px; flex-wrap:wrap; }
+  .opts input[type=range] { width:110px; accent-color: var(--acc); }
+  .bench-row { padding:8px 0; border-top:1px dashed var(--line); }
+  .pass { color:var(--ok); } .fail { color:var(--acc); }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Relay sandbox</h1>
+    <div class="sub" id="tagline">11.5 MB tool calling, running in your browser</div>
+  </div>
+  <div class="grow"></div>
+  <div class="menu" id="menu">
+    <button id="envBtn">Phone ▾</button>
+    <div class="list" id="envList"></div>
+  </div>
+  <button id="reset" title="Reset this environment">↺ Reset</button>
+  <select id="threads" title="Threads (needs cross-origin isolation)"></select>
+  <div class="badge" id="status">engine not loaded</div>
+</header>
+
+<main>
+  <section>
+    <div class="label">Environment <span class="r dim" id="envNote"></span></div>
+    <div class="card" id="stage"></div>
+    <div class="label" style="margin-top:16px">Defined tools <span class="r dim" id="toolCount"></span></div>
+    <textarea id="tools" spellcheck="false"></textarea>
+    <div class="opts">
+      <label>+ distractor tools <input type="range" id="distract" min="0" max="40" value="0"> <b id="distractN">0</b></label>
+      <label><input type="checkbox" id="requireArgs" checked> hold calls with missing required values</label>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Query</div>
+    <div class="row">
+      <input type="text" id="q" placeholder="ask something..." autocomplete="off">
+      <button id="mic" class="mic" title="Speak (browser speech recognition)">🎙</button>
+      <button id="run" class="primary">Run</button>
+    </div>
+    <div class="label" style="margin-top:16px">Result
+      <span class="r tabs" id="tabs">
+        <button data-t="calls" class="on">Calls</button><button data-t="why">Why</button><button data-t="rank">Tool ranking</button><button data-t="raw">Raw</button>
+      </span>
+    </div>
+    <div class="card" id="out"><span class="dim">run a request to see Relay's output here</span></div>
+    <div id="stats"></div>
+    <div id="confirm"><div id="confirmText"></div><div class="row"><button class="go" id="doit">Do it</button><button id="skip">Skip</button></div></div>
+    <div class="label" style="margin-top:16px">Try</div>
+    <div id="chips"></div>
+  </section>
+</main>
+
+<footer>
+  <span><span class="dot"></span>Running Relay 1 (22M parameters, 11.5 MB) in WebAssembly on the Gust runtime, entirely in this tab. Nothing is sent to a server.</span>
+  <span id="loadInfo"></span>
+</footer>
+
+<script type="module" src="/demo/app.mjs"></script>
+</body>
+</html>
