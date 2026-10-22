@@ -22,8 +22,13 @@ pub struct Model {
     /// Hugging Face repository holding the files.
     pub repo: String,
     pub revision: String,
-    /// Which runtime runs it.
+    /// The program that runs it, one per model (kept as a fallback).
     pub runner: String,
+    /// The Gust library that runs it in this process, and the model's id inside that library.
+    #[serde(default)]
+    pub engine: Option<String>,
+    #[serde(default)]
+    pub engine_id: Option<String>,
     pub research: String,
     pub files: Vec<File>,
 }
@@ -41,6 +46,9 @@ pub struct Runner {
 pub struct Registry {
     pub models: BTreeMap<String, Model>,
     pub aliases: BTreeMap<String, String>,
+    /// Shared libraries that run models in this process: one file serves every model built into it.
+    #[serde(default)]
+    pub engines: BTreeMap<String, Runner>,
     pub runners: BTreeMap<String, Runner>,
 }
 
@@ -72,6 +80,12 @@ impl Registry {
     pub fn runner(&self, model: &Model) -> &Runner {
         &self.runners[&model.runner]
     }
+
+    /// The library that runs a model in this process, with the model's id inside it, if it has one.
+    pub fn engine(&self, model: &Model, id: &str) -> Option<(&str, &Runner, String)> {
+        let (name, engine) = self.engines.get_key_value(model.engine.as_deref()?)?;
+        Some((name.as_str(), engine, model.engine_id.clone().unwrap_or_else(|| id.to_string())))
+    }
 }
 
 impl Runner {
@@ -98,11 +112,21 @@ mod tests {
         let r = load();
         for (id, m) in &r.models {
             assert!(r.runners.contains_key(&m.runner), "{id} names a runner that exists");
+            if let Some(e) = &m.engine {
+                assert!(r.engines.contains_key(e), "{id} names an engine that exists");
+            }
             assert!(!m.files.is_empty());
             for f in &m.files {
                 assert_eq!(f.sha256.len(), 64, "{} has a SHA-256", f.name);
                 assert!(f.sha256.bytes().all(|b| b.is_ascii_hexdigit()));
             }
+        }
+        for (name, e) in &r.engines {
+            assert!(e.tag.starts_with('v'), "{name} is pinned to a release tag");
+            assert!(
+                e.assets.contains_key("windows-x86_64") && e.assets.contains_key("linux-x86_64"),
+                "{name} covers the main platforms"
+            );
         }
         for target in r.aliases.values() {
             assert!(r.models.contains_key(target));

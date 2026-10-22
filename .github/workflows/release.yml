@@ -1,6 +1,6 @@
 name: release
 
-# Push a tag like v0.1.0. The release gets the Relay command line for every platform (what `sealpup install` downloads),
+# Push a tag like v0.2.0. The release gets the Relay command line for every platform (what `sealpup install` downloads),
 # the sealpup program for every platform, a SHA256SUMS file for all of them, and the Homebrew formula (sealpup.rb).
 
 on:
@@ -18,11 +18,13 @@ jobs:
       - uses: mlugg/setup-zig@v2
         with:
           version: 0.14.1
-      - run: ZIG=zig bash build.sh release
+      - run: ZIG=zig bash build.sh release lib-release
       - uses: actions/upload-artifact@v4
         with:
           name: runtime
-          path: out/release/relay-*
+          path: |
+            out/release/relay-*
+            out/release/gust-*
 
   cli:
     strategy:

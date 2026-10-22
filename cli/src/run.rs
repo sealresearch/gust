@@ -1,10 +1,13 @@
 //! Asking a model: hand the request to the program that runs it, read back what it decided and why, and show that.
 
+use crate::engine::{self, Kind};
+use crate::registry;
 use crate::ui::{bar, millis, pad, rpad, Style, Term};
 use serde_json::Value;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::time::Instant;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Timing {
@@ -62,6 +65,93 @@ pub fn invoke(
         .map_err(|_| "the model program gave an answer that is not JSON".to_string())?;
     let (load_ms, graph_mb, isa) = parse_loaded(&stderr).unwrap_or((0.0, 0.0, String::new()));
     Ok(Outcome { answer, load_ms, graph_mb, isa, timing: parse_timing(&stderr) })
+}
+
+/// How a request reaches the model.
+pub enum Backend {
+    /// A program started for every request: one per model. Kept as a fallback.
+    Runner { program: PathBuf, dir: PathBuf },
+    /// The Gust library, loaded once in this process: one file for every model.
+    Library(Library),
+}
+
+/// A model opened in the Gust library.
+pub struct Library {
+    engine: engine::Engine,
+    model: engine::Model,
+    load_ms: f64,
+    graph_mb: f64,
+    isa: String,
+}
+
+impl Library {
+    /// Reads the model's files from `dir` and opens it. `prefilter` is fixed here, for the life of the model.
+    pub fn open(
+        engine: engine::Engine,
+        model_id: &str,
+        dir: &Path,
+        files: &[registry::File],
+        prefilter: bool,
+    ) -> Result<Library, String> {
+        let started = Instant::now();
+        let mut loaded = Vec::new();
+        for f in files {
+            let path = dir.join(&f.name);
+            let bytes = std::fs::read(&path).map_err(|e| format!("cannot read {}: {e}", path.display()))?;
+            loaded.push((f.name.clone(), bytes));
+        }
+        let options = format!("{{\"prefilter\": {prefilter}}}");
+        let model = engine.open(model_id, &loaded, Some(&options))?;
+        let load_ms = started.elapsed().as_secs_f64() * 1000.0;
+        let graph_mb = model.memory_bytes() as f64 / 1e6;
+        let isa = engine.runtime();
+        Ok(Library { engine, model, load_ms, graph_mb, isa })
+    }
+
+    /// One request: the answer with why (the first call, timed) and, for `repeat` above 1, that many timed runs.
+    fn invoke(&self, record: &Value, threads: usize, repeat: u32) -> Result<Outcome, String> {
+        self.engine.set_threads(threads);
+        let request = record.to_string();
+        let started = Instant::now();
+        let text = self.model.run(Kind::Json, &request, Some("{\"mode\": \"explain\"}"))?;
+        let first = started.elapsed().as_secs_f64() * 1000.0;
+        let answer: Value =
+            serde_json::from_str(&text).map_err(|_| "the model gave an answer that is not JSON".to_string())?;
+        let mut times = vec![first];
+        for _ in 1..repeat.max(1) {
+            let t = Instant::now();
+            self.model.run(Kind::Json, &request, None)?;
+            times.push(t.elapsed().as_secs_f64() * 1000.0);
+        }
+        let mut sorted = times.clone();
+        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        let timing = Timing { n: times.len() as u32, first, median: sorted[sorted.len() / 2], best: sorted[0] };
+        Ok(Outcome {
+            answer,
+            load_ms: self.load_ms,
+            graph_mb: self.graph_mb,
+            isa: self.isa.clone(),
+            timing: Some(timing),
+        })
+    }
+}
+
+impl Backend {
+    /// Ask the model one request (and `repeat` timed runs of it).
+    pub fn invoke(&self, record: &Value, threads: usize, prefilter: bool, repeat: u32) -> Result<Outcome, String> {
+        match self {
+            Backend::Runner { program, dir } => invoke(program, dir, record, threads, prefilter, repeat),
+            Backend::Library(l) => l.invoke(record, threads, repeat),
+        }
+    }
+
+    /// "library" or "runner", for messages.
+    pub fn name(&self) -> &'static str {
+        match self {
+            Backend::Runner { .. } => "runner",
+            Backend::Library(_) => "library",
+        }
+    }
 }
 
 /// "loaded in 48 ms, graphs 21.2 MB, x86-64 AVX-512 VNNI"

@@ -55,6 +55,14 @@ build() {
   lib-macos-x64)   sharedlib macos-x64 x86_64-macos libgust.dylib GUST_THREADS_POSIX x86 ;;
   lib-macos-arm64) sharedlib macos-arm64 aarch64-macos libgust.dylib GUST_THREADS_POSIX ;;
   lib)       for t in lib-windows-x64 lib-linux-x64 lib-linux-arm64 lib-macos-x64 lib-macos-arm64; do build "$t"; done ;;
+  # The libraries named as the sealpup command line downloads them, next to the Relay programs, with checksums: out/release/
+  lib-release) build lib; mkdir -p out/release
+            cp out/lib/windows-x64/gust.dll out/release/gust-windows-x64.dll
+            cp out/lib/linux-x64/libgust.so out/release/gust-linux-x64.so
+            cp out/lib/linux-arm64/libgust.so out/release/gust-linux-arm64.so
+            cp out/lib/macos-arm64/libgust.dylib out/release/gust-macos-arm64.dylib
+            cp out/lib/macos-x64/libgust.dylib out/release/gust-macos-x64.dylib
+            (cd out/release && sha256sum relay-* gust-* > SHA256SUMS) ;;
   # The model API (sdk/include/gust_model.h) with Relay built in, and its tests: out/sdk-test-x64.exe [MODEL_DIR RECORDS]
   test-sdk-x64) x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/sdk-test-x64.exe "-Isdk/include -DGUST_MODEL_RELAY $HOST sdk/src/model.c models/relay/sdk/relay_model.c sdk/tests/abi_test.c" ;;
   bench-calls-x64) x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/relay-calls-x64.exe "-Imodels/relay/host $HOST models/relay/tools/bench_calls.c -lpsapi" ;;

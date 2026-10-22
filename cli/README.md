@@ -100,10 +100,24 @@ the request, a number, a date and time, one of the options) and how sure Relay i
 
 Requests can also come from a pipe: `echo "Play some Bowie" | sealpup run relay-1`.
 
+## How a model runs
+
+`sealpup install` fetches two things besides the weights: the **Gust library** (`gust`, one file for every model, about 1 MB)
+and, for now, the model's own **program** (`relay`). `sealpup run` loads the library into the `sealpup` process, opens the model
+once, and sends it every request, so a conversation does not reload the model for each line. If the library is not there, or
+cannot be loaded, `sealpup` says so and runs the model with its own program instead; the calls are identical either way (CI
+checks it on every system). A new model needs a plugin in the library and an entry in `registry.json`, and `sealpup` needs no
+new code for it. The library is described in [sdk/README.md](../sdk/README.md).
+
+`SEALPUP_ENGINE` forces one way: `library` or `runner` (the default, `auto`, prefers the library). `sealpup doctor` shows
+which is in use.
+
 ## How it keeps you safe
 
 - **Weights** are checked against SHA-256 checksums that are compiled into this program, so a download that was changed
   on the way, or at the source, is refused and nothing is installed.
+- **The library** is checked the same way as the program. A library that does not match is not installed, and `sealpup` keeps
+  using the model's own program.
 - **The program** is checked against the `SHA256SUMS` file of the release it comes from. That guards against a broken
   download, not against someone who can change the release itself.
 - A file is written beside its destination and only moved into place once it has been checked.
@@ -114,6 +128,8 @@ Requests can also come from a pipe: `echo "Play some Bowie" | sealpup run relay-
 | Variable | What it does |
 |---|---|
 | `SEALPUP_HOME` | Where models and programs are kept. The default is `~/.sealpup`. |
+| `SEALPUP_ENGINE` | `library`, `runner` or `auto` (the default): how a model is reached. |
+| `SEALPUP_LIBRARY` | Use this Gust library file instead of the downloaded one (for a library you built yourself). |
 | `SEALPUP_HF_URL` | Where to download weights from instead of `https://huggingface.co`. |
 | `SEALPUP_GITHUB_URL` | Where to download programs from instead of `https://github.com`. |
 | `NO_COLOR` | Turn colour off. |
