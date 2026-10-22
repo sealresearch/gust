@@ -40,10 +40,53 @@ fn explain(url: &str, e: ureq::Error) -> String {
     }
 }
 
-pub fn fetch_text(url: &str) -> Result<String, String> {
-    agent().get(url).call().map_err(|e| explain(url, e))?.into_string().map_err(|e| format!("cannot read {url}: {e}"))
+/// The file a `file://` URL names, for mirrors on disk (`file:///C:/mirror/hf` or `file:///home/me/mirror/hf`).
+fn local_path(url: &str) -> Option<PathBuf> {
+    let rest = url.strip_prefix("file://")?;
+    let mut decoded = Vec::with_capacity(rest.len());
+    let bytes = rest.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        let hex = |b: u8| (b as char).to_digit(16);
+        if bytes[i] == b'%' && i + 2 < bytes.len() && hex(bytes[i + 1]).is_some() && hex(bytes[i + 2]).is_some() {
+            decoded.push((hex(bytes[i + 1]).unwrap() * 16 + hex(bytes[i + 2]).unwrap()) as u8);
+            i += 3;
+        } else {
+            decoded.push(bytes[i]);
+            i += 1;
+        }
+    }
+    let path = String::from_utf8_lossy(&decoded).into_owned();
+    // "/C:/mirror" is how a Windows drive looks inside a URL.
+    let b = path.as_bytes();
+    let path = if b.len() > 2 && b[0] == b'/' && b[2] == b':' && b[1].is_ascii_alphabetic() {
+        path[1..].to_string()
+    } else {
+        path
+    };
+    Some(PathBuf::from(path))
 }
 
+/// Open `url` for reading, and say how long it is when that is known.
+fn open(url: &str) -> Result<(Box<dyn Read + Send + Sync>, Option<u64>), String> {
+    if let Some(path) = local_path(url) {
+        let file = fs::File::open(&path).map_err(|e| format!("not found: {} ({e})", path.display()))?;
+        let len = file.metadata().ok().map(|m| m.len());
+        return Ok((Box::new(file), len));
+    }
+    let resp = agent().get(url).call().map_err(|e| explain(url, e))?;
+    let len = resp.header("Content-Length").and_then(|v| v.parse::<u64>().ok());
+    Ok((resp.into_reader(), len))
+}
+
+pub fn fetch_text(url: &str) -> Result<String, String> {
+    let (mut reader, _) = open(url)?;
+    let mut text = String::new();
+    reader.read_to_string(&mut text).map_err(|e| format!("cannot read {url}: {e}"))?;
+    Ok(text)
+}
+
+#[derive(Debug)]
 pub struct Fetched {
     pub bytes: u64,
     pub secs: f64,
@@ -58,8 +101,8 @@ pub fn download(
     label: &str,
     term: Term,
 ) -> Result<Fetched, String> {
-    let resp = agent().get(url).call().map_err(|e| explain(url, e))?;
-    let total = resp.header("Content-Length").and_then(|v| v.parse::<u64>().ok()).or(size).unwrap_or(0);
+    let (mut reader, length) = open(url)?;
+    let total = length.or(size).unwrap_or(0);
     if let Some(dir) = dest.parent() {
         fs::create_dir_all(dir).map_err(|e| format!("cannot create {}: {e}", dir.display()))?;
     }
@@ -68,7 +111,6 @@ pub fn download(
     let part = PathBuf::from(part);
     let result = (|| -> Result<Fetched, String> {
         let mut file = fs::File::create(&part).map_err(|e| format!("cannot write {}: {e}", part.display()))?;
-        let mut reader = resp.into_reader();
         let mut hasher = Sha256::new();
         let mut buf = vec![0u8; 64 * 1024];
         let mut progress = Progress::new(term, label, total);
@@ -149,6 +191,32 @@ mod tests {
         assert_eq!(sums["relay-linux-x64"], "aa11");
         assert_eq!(sums["relay-windows-x64.exe"], "bb22");
         assert_eq!(sums.len(), 2);
+    }
+
+    #[test]
+    fn file_urls_name_files_on_disk() {
+        assert_eq!(local_path("file:///C:/mirror/hf/a.bin"), Some(PathBuf::from("C:/mirror/hf/a.bin")));
+        assert_eq!(local_path("file:///home/me/mirror"), Some(PathBuf::from("/home/me/mirror")));
+        assert_eq!(local_path("file:///C:/my%20mirror/a"), Some(PathBuf::from("C:/my mirror/a")));
+        assert_eq!(local_path("https://huggingface.co"), None);
+    }
+
+    #[test]
+    fn a_mirror_on_disk_downloads_and_verifies_like_a_server() {
+        let dir = std::env::temp_dir().join(format!("seal-mirror-test-{}", std::process::id()));
+        fs::create_dir_all(&dir).unwrap();
+        fs::write(dir.join("a.bin"), b"abc").unwrap();
+        let url = format!("file://{}", dir.join("a.bin").display()).replace(std::path::MAIN_SEPARATOR, "/");
+        let abc = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
+        let dest = dir.join("out").join("a.bin");
+        let done = download(&url, &dest, Some(abc), Some(3), "a.bin", Term::plain()).unwrap();
+        assert_eq!(done.bytes, 3);
+        assert_eq!(fs::read(&dest).unwrap(), b"abc");
+        let bad = download(&url, &dir.join("out").join("b.bin"), Some("00"), None, "b.bin", Term::plain());
+        assert!(bad.unwrap_err().contains("checksum"));
+        assert!(!dir.join("out").join("b.bin").exists() && !dir.join("out").join("b.bin.part").exists());
+        assert_eq!(fetch_text(&url).unwrap(), "abc");
+        fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]

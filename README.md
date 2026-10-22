@@ -12,6 +12,7 @@ The quickest way to try it is the `seal` command line ([cli/](cli/README.md)), w
 that runs it, checks both, and runs them:
 
 ```sh
+curl -fsSL https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.sh | sh   # or: brew install sealresearch/tap/seal
 seal install relay-1
 seal run relay-1 "Show me the Eiffel Tower on the map"
 ```

@@ -22,6 +22,30 @@ seal run relay-1 "Set an alarm for 6:45 tomorrow"
 that runs it from a release of this repository, checks both, and keeps them in `~/.seal`. Everything after that runs
 offline.
 
+## Install
+
+macOS and Linux (and Git Bash on Windows):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.sh | sh
+```
+
+Windows (PowerShell):
+
+```powershell
+irm https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.ps1 | iex
+```
+
+Homebrew:
+
+```sh
+brew install sealresearch/tap/seal
+```
+
+The scripts download the program for your platform from the latest release, check it against the release's
+`SHA256SUMS`, and put it in `~/.local/bin` (`%LOCALAPPDATA%\Programs\seal` on Windows). `SEAL_VERSION` picks a release
+and `SEAL_INSTALL` the folder. From source: `cargo install --path cli --locked`.
+
 ## Commands
 
 | | |
@@ -104,11 +128,30 @@ Requests can also come from a pipe: `echo "Play some Bowie" | seal run relay-1`.
 Output is plain text when it is not a terminal. Exit codes: 0 for success, 1 for an error, 2 for a mistake in how the
 command was used.
 
-## Build
+## Build, and try it before anything is published
 
 ```sh
 cargo build --release     # target/release/seal
 cargo test
 ```
+
+`seal install` downloads from Hugging Face and from a release of this repository. To try everything before either
+exists, `dev/mirror.sh` lays those files out in a folder on your machine and writes the settings that point `seal`
+at it. Any URL setting also accepts a folder, as `file:///...`.
+
+```sh
+ZIG=/path/to/zig ./build.sh release        # the Relay program for every platform
+(cd cli && cargo build --release)           # seal itself
+cli/dev/mirror.sh                           # the mirror, in ~/.seal-dev
+
+source ~/.seal-dev/env.sh                   # PowerShell: . ~/.seal-dev/env.ps1
+seal install relay-1
+```
+
+The settings keep the models in `~/.seal-dev/home`, apart from a real `~/.seal`. `cli/install.sh` and `cli/install.ps1`
+work against the same mirror, because the settings include `SEAL_GITHUB_URL` and `SEAL_VERSION`.
+
+The Homebrew formula is generated for each release: `cli/scripts/formula.sh TAG SHA256SUMS`. The release workflow
+attaches it as `seal.rb`; copy it into the `sealresearch/homebrew-tap` repository as `Formula/seal.rb`.
 
 The list of models and their checksums is `registry.json`. Adding a model means adding an entry there.
