@@ -1,0 +1,67 @@
+name: release
+
+# Push a tag like v0.1.0. The release gets the Relay command line for every platform (what `seal install` downloads),
+# the seal program for every platform, and a SHA256SUMS file for all of them.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v1
+        with:
+          version: 0.14.1
+      - run: ZIG=zig bash build.sh release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: runtime
+          path: out/release/relay-*
+
+  cli:
+    strategy:
+      matrix:
+        include:
+          - { os: ubuntu-22.04, name: seal-linux-x64 }
+          - { os: ubuntu-22.04-arm, name: seal-linux-arm64 }
+          - { os: macos-13, name: seal-macos-x64 }
+          - { os: macos-latest, name: seal-macos-arm64 }
+          - { os: windows-latest, name: seal-windows-x64.exe }
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release --manifest-path cli/Cargo.toml
+      - name: Name the program for its platform
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then src=cli/target/release/seal.exe; else src=cli/target/release/seal; fi
+          mkdir -p dist
+          cp "$src" "dist/${{ matrix.name }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: dist/*
+
+  publish:
+    needs: [runtime, cli]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        run: cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes
