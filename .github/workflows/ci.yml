@@ -33,6 +33,51 @@ jobs:
         with:
           version: 0.14.1
       - run: ZIG=zig bash build.sh release
+      - name: The model library and the Python wheels, for every platform
+        run: |
+          ZIG=zig bash build.sh lib
+          python3 packages/python/scripts/build_wheels.py
+
+  sdk:
+    # The model API and the Python package, on the three systems they run on: the library is built here, then the toy
+    # models and Relay (downloaded from Hugging Face) go through the C and Python interfaces.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build the library for this system
+        run: |
+          case "$RUNNER_OS" in
+            Windows) target=lib-windows-x64 ;;
+            macOS) target=lib-macos-arm64 ;;
+            *) target=lib-linux-x64 ;;
+          esac
+          ZIG=zig bash build.sh $target
+      - name: The model API tests (toy models)
+        if: runner.os == 'Windows'
+        run: |
+          ZIG=zig bash build.sh test-sdk-x64
+          ./out/sdk-test-x64.exe
+      - name: Fetch Relay from Hugging Face
+        working-directory: packages/python
+        run: |
+          cp ../../cli/registry.json sealresearch/_registry.json
+          PYTHONPATH=. python -c "import sealresearch as sr; sr.Model.load('relay-1', cache='../../relay-cache').close()"
+      - name: The Python package tests
+        working-directory: packages/python
+        run: PYTHONPATH=. RELAY_MODEL_DIR="$GITHUB_WORKSPACE/relay-cache/relay-1" python -W error::ResourceWarning -m unittest discover -s tests -v
 
   cli:
     strategy:
