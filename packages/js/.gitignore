@@ -1,0 +1,5 @@
+# Copied from the rest of the repository by `npm run sync` (see scripts/sync.mjs)
+/src/registry.mjs
+/wasm/
+/LICENSE
+*.tgz

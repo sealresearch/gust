@@ -25,7 +25,7 @@ out/relay-x64.exe relay-model --record-file request.json --prefilter
 
 A request is a JSON record: `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. `context.now`
 is the date and time Relay resolves "tomorrow" against. From C, call `relay_open` and `relay_call` (see
-[host/README.md](host/README.md)); from JavaScript, use `web/relay-native.mjs` with the WebAssembly build:
+[host/README.md](host/README.md)); from JavaScript, `npm install @sealresearch/gust` (see [packages/js](../../packages/js/README.md)); to use the host's own WebAssembly exports instead, `web/relay-native.mjs` with the build from `./build.sh wasm`:
 
 ```js
 import {readFileSync} from 'node:fs';

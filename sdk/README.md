@@ -40,7 +40,8 @@ not depend on the thread count, the CPU or the platform.
 | Language | | |
 |---|---|---|
 | Python | [`packages/python`](../packages/python) | `pip install sealresearch`: generic over every model, wheels for five platforms |
-| JavaScript | [`packages/relay`](../packages/relay) | `npm install @sealresearch/relay`: Relay in Node and in the browser, on the WebAssembly build |
+| JavaScript | [`packages/js`](../packages/js) | `npm install @sealresearch/gust`: generic over every model, in Node and in the browser, on a WebAssembly build of this API |
+| JavaScript, Relay only | [`packages/relay`](../packages/relay) | `npm install @sealresearch/relay`: `relay.predict(request)`, a thin layer over the one above |
 | Rust | [`cli`](../cli) | the `sealpup` command line loads `libgust` and runs models through it (`cli/src/engine.rs`, about 200 lines) |
 | C, C++ | this folder | link `libgust` and include `gust_model.h` |
 | Rust, Go and the rest | | bind the functions above; the Python package is a few hundred lines |
@@ -49,6 +50,7 @@ not depend on the thread count, the CPU or the platform.
 
 ```sh
 ZIG=zig bash build.sh lib         # out/lib/<platform>/gust.dll, libgust.so or libgust.dylib, for five platforms
+ZIG=zig bash build.sh wasm-models wasm-models-mt    # out/gust-models.wasm and gust-models-mt.wasm, for the JavaScript package
 ZIG=zig bash build.sh test-sdk-x64 && out/sdk-test-x64.exe [MODEL_DIR RECORDS]
 ```
 
