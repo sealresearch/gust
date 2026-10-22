@@ -1,0 +1,43 @@
+{
+  "name": "@gust/relay",
+  "version": "0.1.0",
+  "description": "Relay 1, an 11.5 MB tool-calling model, in Node and in the browser. It runs on the Gust WebAssembly runtime.",
+  "keywords": ["tool-calling", "function-calling", "on-device", "webassembly", "wasm", "llm", "encoder", "gust"],
+  "license": "MIT",
+  "author": "Seal Research <support@seal.computer>",
+  "homepage": "https://seal.computer/research/relay-1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sealresearch/gust.git",
+    "directory": "packages/relay"
+  },
+  "bugs": "https://github.com/sealresearch/gust/issues",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "wasm",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "prepack": "node scripts/sync.mjs",
+    "test": "node --test"
+  }
+}
