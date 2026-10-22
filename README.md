@@ -8,6 +8,16 @@ This repository holds the runtime and the code for **Relay**, Seal's first relea
 list of tools into exact function calls. It is 22 million parameters in 11.5 MB, and it needs no GPU, no server and no
 Python.
 
+The quickest way to try it is the `seal` command line ([cli/](cli/README.md)), which downloads a model and the program
+that runs it, checks both, and runs them:
+
+```sh
+seal install relay-1
+seal run relay-1 "Show me the Eiffel Tower on the map"
+```
+
+To build everything yourself:
+
 ```sh
 # Relay's weights are on Hugging Face
 git clone https://huggingface.co/sealresearch/relay relay-model
@@ -37,11 +47,12 @@ models, and where it loses are in the [research post](https://seal.computer/rese
 runtime/        the Gust runtime: C, one translation unit, native and WebAssembly (see runtime/README.md)
 models/relay/   Relay: the C host (host/), the JavaScript host and bindings (web/), a browser demo (demo/),
                 tests (tests/) and benchmark tools (tools/)
+cli/            the seal command line: install models, run them, measure them (Rust, see cli/README.md)
 build.sh        builds the runtime, the Relay host and the runtime tests with zig cc; outputs go to out/
 ```
 
-Start with [models/relay/README.md](models/relay/README.md) to use Relay, or [runtime/README.md](runtime/README.md) for
-the runtime.
+Start with [cli/README.md](cli/README.md) or [models/relay/README.md](models/relay/README.md) to use Relay, or
+[runtime/README.md](runtime/README.md) for the runtime.
 
 ## Licence
 

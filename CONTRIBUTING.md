@@ -18,6 +18,9 @@ bash models/relay/tests/shared_arena.sh relay-model
 `relay-model/` holds the Relay 1 files from [Hugging Face](https://huggingface.co/sealresearch/relay). The tests in
 `runtime/tests` need no model files.
 
+The `seal` command line is a Rust program in `cli/`: `cd cli && cargo test`. CI also runs `cargo fmt --check` and
+`cargo clippy -- -D warnings`.
+
 ## One rule: outputs are bit-exact
 
 Gust returns the same bits on every target and for any thread count. A change to a kernel, an operator or the host is
