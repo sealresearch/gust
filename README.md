@@ -31,12 +31,30 @@ sealpup run relay-1 "Show me the Eiffel Tower on the map"
 `sealpup list` shows every model that can be installed. To build a model yourself, see its README; for Relay, that is
 [models/relay/README.md](models/relay/README.md).
 
+## From JavaScript
+
+```sh
+npm install @sealresearch/relay
+```
+
+```js
+import { Relay } from '@sealresearch/relay';
+
+const relay = await Relay.load();   // downloads Relay 1 the first time (14 MB), checks it, and keeps it
+relay.predict({ text: 'Show me the Eiffel Tower on the map', tools });   // [{ tool: 'show_map', args: { query: 'Eiffel Tower' } }]
+```
+
+It runs in Node and in the browser on the same WebAssembly runtime, and returns the same calls as `sealpup`
+([packages/relay/README.md](packages/relay/README.md)).
+
 ## Repository
 
 ```
 runtime/    the Gust runtime: C, one translation unit, native and WebAssembly (see runtime/README.md)
 models/     one folder per model, with its code, tests and demo (see models/README.md)
 cli/        the sealpup command line: install models, run them, measure them (Rust, see cli/README.md)
+packages/   the npm package for Relay: @sealresearch/relay (see packages/relay/README.md)
+docs/       the .gust file format (docs/FORMAT.md)
 build.sh    builds the runtime, the model programs and the runtime tests with zig cc; outputs go to out/
 ```
 

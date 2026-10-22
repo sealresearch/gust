@@ -109,9 +109,9 @@ out/relay-x64.exe ../relay-model --record '{
 # [{"tool": "show_map", "args": {"query": "Eiffel Tower"}}]
 ```
 
-In a browser or in Node, build `relay.wasm` with `./build.sh wasm` and use `models/relay/web/relay-native.mjs`; the
-repository README has a short example. The native and WebAssembly builds return the same calls, byte for byte, for any
-thread count.
+In Node or a browser, run `npm install @sealresearch/relay` and call `Relay.load()`, which downloads and checks these files for you
+([package](https://github.com/sealresearch/gust/tree/main/packages/relay)). To build the WebAssembly runtime yourself, run `./build.sh wasm`
+and use `models/relay/web/relay-native.mjs`. The native and WebAssembly builds return the same calls, byte for byte, for any thread count.
 
 An app gives Relay a record: `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. Relay returns
 `[{tool, args}]`, or `[]` when no tool fits.
