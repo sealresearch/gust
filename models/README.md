@@ -15,6 +15,7 @@ Relay is the first model, so its folder shows the shape. A model has what it nee
 models/<name>/
   README.md     what it does, how to use it, its limits
   MODEL_CARD.md the model card: the file that is the README of the weights repository on Hugging Face
+  assets/       the images of the model card (a banner, charts)
   host/         the C host: the model's own pipeline on top of the Gust runtime, for every target
   web/          the JavaScript host and the bindings for the WebAssembly build
   demo/         a browser demo
@@ -34,8 +35,8 @@ states what the model was trained on and its licence. Code here is MIT; each mod
    releases for every platform. Today the unprefixed targets (`x64`, `arm64`, `wasm`, ...) build Relay; the next model
    gets targets of its own, prefixed with its name.
 3. **The weights and a model card** on Hugging Face, in `sealresearch/<name>`, with the licence, the training data and
-   its sources, the evaluation, and the limits. The card is written here, in `MODEL_CARD.md`, and copied to the weights
-   repository as its `README.md`, so the two do not drift apart.
+   its sources, the evaluation, and the limits. The card is written here, in `MODEL_CARD.md` with its `assets/`, and copied to the weights
+   repository as its `README.md` and `assets/`, so the two do not drift apart.
 4. **An entry in the command line's registry**, [`cli/registry.json`](../cli/registry.json): the model's files with their
    SHA-256 checksums, and the program that runs it. After that `seal install <name>` works.
 5. **A row in the table above** and in the [README](../README.md).

@@ -2,8 +2,13 @@
 license: cc-by-4.0
 language:
   - en
-base_model: jhu-clsp/ettin-encoder-32m
 library_name: gust
+base_model: jhu-clsp/ettin-encoder-32m
+datasets:
+  - google/mobile-actions
+  - nvidia/When2Call
+  - AmazonScience/massive
+  - clinc/clinc_oos
 tags:
   - tool-calling
   - function-calling
@@ -14,16 +19,19 @@ tags:
   - gust
 ---
 
-# Relay 1
+![Relay 1](assets/banner.svg)
+
+**[Write-up](https://seal.computer/research/relay-1)** • **[Try it in your browser](https://seal.computer/research/relay-1#try-it)** • **[Code](https://github.com/sealresearch/gust)** • **[Seal](https://seal.computer)**
 
 Relay 1 turns what a person said and the tools an app offers into the calls to make, or into no call when nothing fits.
-It is 22 million parameters in 11.5 MB, and it runs on the device: natively on x86-64 and ARM64, and in a browser tab
-through WebAssembly. There is no GPU, no server and no Python in the path.
+It runs on the device: natively on x86-64 and ARM64, and in a browser tab through WebAssembly, with no GPU, no server
+and no Python in the path.
 
-Most tool-calling models are language models, so they _write_ the call one token at a time. Relay writes nothing. It
-reads the request and the tool schemas together, then points at the answer. That is why it is small, why it cannot
-invent a value that is not in the request, and why it is unusually good at filling slots. It is also where its limits
-come from, and they are listed below.
+- **Small**: 22 million parameters in 11.5 MB of model files, 4-bit weights throughout.
+- **Fast**: about 39 ms per request on 8 threads in WebAssembly, and under 100 ms on every benchmark we run.
+- **Exact**: Relay does not write its calls one token at a time. It reads the request and the tool schemas together,
+  then points at the answer, so it cannot invent a value that is not in the request, and it is unusually good at filling
+  slots. That is also where its limits come from, and they are listed below.
 
 ```
 User   Set an alarm for 6:45 tomorrow and text Sam I'm running late
@@ -35,7 +43,6 @@ Relay  set_alarm(time="2026-10-18T06:45:00")
 
 Relay is built by [Seal Research](https://seal.computer). The write-up has the method, the full benchmark tables and the
 failure cases: **[Relay 1: a tool-calling model that reads instead of writes](https://seal.computer/research/relay-1)**.
-You can also try it in your browser on that page.
 
 ## Model details
 
@@ -48,10 +55,10 @@ You can also try it in your browser on that page.
 | Vocabulary | 16k tokens, pruned from 50k |
 | Language | English (evaluated on English benchmarks only) |
 | Runtime | [Gust](https://github.com/sealresearch/gust), Seal's dependency-free C runtime |
+| Release date | October 2026 |
 | Licence | CC BY 4.0 |
-| Version | 1 |
 
-## Files
+### Files
 
 | File | What it is | Size |
 |---|---|---|
@@ -66,10 +73,25 @@ You can also try it in your browser on that page.
 The `.gust` files are quantized graphs for the Gust runtime. They are not PyTorch or safetensors files, and they do not
 load in `transformers`.
 
-## How to use
+## Get started
 
-Download the files and build the host from the [Gust repository](https://github.com/sealresearch/gust). You need
-[zig](https://ziglang.org) to build it.
+With the [`seal` command line](https://github.com/sealresearch/gust/tree/main/cli), which downloads Relay and the
+program that runs it, and checks both:
+
+```sh
+seal install relay-1
+seal run relay-1 "Show me the Eiffel Tower on the map"
+```
+
+```
+  ✓ show_map
+      query  "Eiffel Tower"  copied     100%
+```
+
+`seal run` offers a built-in set of phone tools; `--tools tools.json` gives it your own.
+
+Or build the host from the [Gust repository](https://github.com/sealresearch/gust) yourself. You need
+[zig](https://ziglang.org).
 
 ```sh
 git clone https://huggingface.co/sealresearch/relay relay-model
@@ -94,27 +116,42 @@ thread count.
 An app gives Relay a record: `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. Relay returns
 `[{tool, args}]`, or `[]` when no tool fits.
 
-## Intended use
-
-Deciding which of an app's tools to call, and with which arguments, from a short English request, on the device and
-without sending the request anywhere. It also fills typed forms: dialogue state tracking and slot filling are the same
-problem. It is meant to sit behind an interface where a person can see and confirm what it is about to do.
-
-Out of scope: composing new text, general reasoning, languages other than English (not evaluated), and anything where a wrong call is costly and
-there is no confirmation step.
-
 ## Evaluation
 
-We ran Relay 1 and 12 other models, including Cactus Needle 3, Google FunctionGemma 270M, Liquid LFM2.5 and
-Qwen3.5, on 12 evaluations in one harness, and report all of them, including the ones Relay loses. The full tables,
-the harness details and the per-set scores are in the [write-up](https://seal.computer/research/relay-1). In short:
+We ran Relay 1 and 12 other models on 12 evaluations, in one harness and on the same inputs, and report all of them,
+including the ones Relay loses. Each model used its own chat template and its own native tool-call format.
 
-- Mean over the 12 evaluations: **67.2**. The best other on-device model scores 48.7.
-- Tied for first of all 13 models on Mobile Actions, and first on both SNIPS slot-filling sets, against models of up to
-  748B parameters.
-- About 39 ms per request on 8 threads in WebAssembly, and under 100 ms on every benchmark with the prefilter.
+![Mean score of the on-device models over 12 evaluations](assets/benchmarks.svg)
+
+Models small enough to ship inside an app. Exact-match accuracy; the best on-device score in each column is in bold.
+
+| Model | Parameters | Size | Mean (12) | Mobile Actions | DroidCall | BFCL | SNIPS | ToolACE | NexusRaven | Sealed set |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| **Relay 1** | 22M | 11.5 MB | **67.2** | **92.2** | 44.5 | 63.9 | **93.3** | 44.3 | 37.4 | **83.6** |
+| LFM2.5-1.2B | 1.17B | 2.3 GB | 48.7 | 81.6 | 36.0 | **68.4** | 27.2 | 53.7 | 32.1 | 81.0 |
+| Qwen3.5-0.8B | 873M | 1.7 GB | 48.4 | 73.7 | 26.5 | 64.5 | 30.6 | **53.9** | **45.3** | 71.1 |
+| LFM2.5-350M | 354M | 709 MB | 44.9 | 77.0 | 38.0 | 63.9 | 20.9 | 53.8 | 33.6 | 74.0 |
+| LFM2.5-230M | 230M | 459 MB | 41.3 | 70.6 | 29.0 | 62.7 | 15.0 | 47.4 | 36.5 | 69.6 |
+| Needle 3 | 121M | 35 MB | 39.0 | 87.5 | **45.5** | 51.8 | 14.9 | 37.5 | 17.3 | 67.1 |
+| FunctionGemma | 268M | 536 MB | 34.4 | 59.3 | 20.5 | 49.0 | 18.1 | 46.7 | 23.0 | 57.5 |
+
+For scale, three of the larger models we ran:
+
+| Model | Parameters | Size | Mean (12) | Mobile Actions | DroidCall | BFCL | SNIPS | ToolACE | NexusRaven | Sealed set |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Qwen3.5-4B | 4.7B | 9.3 GB | 67.1 | 92.2 | 56.0 | 80.0 | 51.0 | 69.1 | 65.1 | 89.8 |
+| Qwen3.6-35B-A3B | 35B (3B active) | 72 GB | 70.7 | 89.8 | 54.5 | 80.4 | 56.4 | 67.7 | 68.9 | 89.1 |
+| DeepSeek V4.1 Flash | 748B | 510 GB | 70.4 | 81.5 | 55.0 | 79.1 | 66.8 | 69.0 | 61.6 | 88.9 |
+
+- Relay is tied for first of all 13 models on Mobile Actions, and first on both SNIPS slot-filling sets, against models
+  of up to 748B parameters.
 - It loses on general tool calling over arbitrary schemas: on BFCL, ToolACE and NexusRaven, language models from 2B
   parameters up are well ahead.
+- The table shows 7 of the 12 evaluations. The rest (DSTC8, SNIPS 7-way, Glaive, BitAgent, ATIS), the other larger
+  models, and how each benchmark was scored are in the [write-up](https://seal.computer/research/relay-1).
+- The Sealed set is our own held-out set. Nobody, including us, has trained on it.
+- Speed: about 39 ms per request on 8 threads in WebAssembly, and under 100 ms on every benchmark with the prefilter,
+  even with 100 tools once their vectors are cached.
 
 ## Training
 
@@ -130,6 +167,15 @@ were kept.
 vocabulary was pruned from 50k to 16k tokens, the linear layers and embeddings were trained with 4-bit quantization,
 and the result was exported to Gust graphs. The exported graphs reproduce the PyTorch model exactly on our golden
 records.
+
+## Intended use
+
+Deciding which of an app's tools to call, and with which arguments, from a short English request, on the device and
+without sending the request anywhere. It also fills typed forms: dialogue state tracking and slot filling are the same
+problem. It is meant to sit behind an interface where a person can see and confirm what it is about to do.
+
+Out of scope: composing new text, general reasoning, languages other than English (not evaluated), and anything where
+a wrong call is costly and there is no confirmation step.
 
 ## Limitations
 
@@ -168,6 +214,20 @@ Training data from third parties:
 
 Relay is evaluated on public benchmarks, including Mobile Actions, SNIPS, DSTC8, BFCL, ToolACE, NexusRaven and
 DroidCall; they are named, with their licences and our scoring, in the write-up.
+
+## Citation
+
+If you use Relay in your work, please cite:
+
+```bibtex
+@misc{relay1_2026,
+  title        = {Relay 1: a tool-calling model that reads instead of writes},
+  author       = {{Seal Research}},
+  year         = {2026},
+  organization = {Seal Research},
+  howpublished = {\url{https://seal.computer/research/relay-1}}
+}
+```
 
 ## Contact
 
