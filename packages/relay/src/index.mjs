@@ -1,6 +1,6 @@
-// @gust/relay: Relay 1 in Node and in the browser, on the Gust WebAssembly runtime.
+// @sealresearch/relay: Relay 1 in Node and in the browser, on the Gust WebAssembly runtime.
 //
-//   import { Relay } from '@gust/relay';
+//   import { Relay } from '@sealresearch/relay';
 //   const relay = await Relay.load();                      // downloads the 11.5 MB model once, then keeps it
 //   relay.predict({ text: 'Show me the Eiffel Tower on the map', tools });   // [{ tool, args }]
 //   relay.close();

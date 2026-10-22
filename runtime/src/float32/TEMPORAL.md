@@ -9,7 +9,7 @@ weights; this extension adds them, plus 8-bit codes for the int16-activation con
 
 - Capability bit 13 (8192); manifest `required_capabilities` entry `float32-temporal-v1`, present exactly when a graph
   uses an operator or mode below. Operators 47 to 49 are part of decoder builds, so such a graph also declares
-  `float32-decoder-v1` (as `@gust/core` requires for every operator above 37).
+  `float32-decoder-v1` (as the JavaScript binding requires for every operator above 37).
 - Header, tensor, operator and context layouts do not change. Each operator or mode uses an operator code or field
   value that a runtime without it refuses (`GUST_OPERATOR` or `GUST_FORMAT`) before it writes the arena, so no
   existing graph changes behaviour; the Relay bit-exactness suite and `runtime/tests/t5.c` pass unchanged.

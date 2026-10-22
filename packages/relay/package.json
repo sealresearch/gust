@@ -1,5 +1,5 @@
 {
-  "name": "@gust/relay",
+  "name": "@sealresearch/relay",
   "version": "0.1.0",
   "description": "Relay 1, an 11.5 MB tool-calling model, in Node and in the browser. It runs on the Gust WebAssembly runtime.",
   "keywords": ["tool-calling", "function-calling", "on-device", "webassembly", "wasm", "llm", "encoder", "gust"],

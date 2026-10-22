@@ -1,4 +1,4 @@
-# @gust/relay
+# @sealresearch/relay
 
 [Relay 1](https://seal.computer/research/relay-1) in Node and in the browser. Relay turns what a person said and the
 tools an app offers into the calls to make, or into no call when nothing fits. It is 22 million parameters in 11.5 MB,
@@ -6,11 +6,11 @@ it runs on the CPU through the [Gust](https://github.com/sealresearch/gust) WebA
 device.
 
 ```sh
-npm install @gust/relay
+npm install @sealresearch/relay
 ```
 
 ```js
-import { Relay } from '@gust/relay';
+import { Relay } from '@sealresearch/relay';
 
 const relay = await Relay.load();   // downloads the model the first time (11.5 MB, 14 MB with the prefilter), then keeps it
 

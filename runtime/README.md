@@ -45,7 +45,7 @@ so every build agrees bit for bit; `tests/bitexact.sh` checks it.
 `wasm` / `wasm-mt` enable relaxed SIMD; `wasm-simd` / `wasm-mt-simd` use plain SIMD128 for browsers such as
 Safari. The `-mt` targets use workers and shared memory. `all` builds both WASM variants alongside native targets.
 `runtime-wasm` (relaxed SIMD) and `runtime-wasm-simd` (plain SIMD128) build the runtime alone for JavaScript hosts:
-`out/gust.wasm` and `out/gust-simd.wasm`, fixed 128 MiB memory, the public entry points; used by `@gust/core` and the
+`out/gust.wasm` and `out/gust-simd.wasm`, fixed 128 MiB memory, the public entry points; used by the JavaScript hosts and the
 model packages.
 
 Threads: `gust_threads_start(n)` (POSIX, Win32) or, in WebAssembly, the host's workers parked in `gust_worker`
