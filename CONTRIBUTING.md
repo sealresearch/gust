@@ -1,7 +1,7 @@
 # Contributing
 
-Issues and pull requests are welcome. For a change to the runtime or the Relay host, please open an issue first so we
-can agree on the approach.
+Issues and pull requests are welcome. For a change to the runtime or to a model's host, please open an issue first so we
+can agree on the approach. To add a model, see [models/README.md](models/README.md).
 
 ## Build and test
 

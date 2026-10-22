@@ -62,7 +62,7 @@ Models can be named by id (`relay-1`) or by alias (`relay`).
 
 ### Asking Relay
 
-Relay turns a request and a list of tools into calls. Without `--tools`, `seal run` offers it a built-in set of phone
+`seal run` works the same way for every model. This section is about Relay, the first one. Relay turns a request and a list of tools into calls. Without `--tools`, `seal run` offers it a built-in set of phone
 tools (alarms, messages, weather, maps, volume, music, flashlight) so you can try it straight away. To use your own,
 give a file:
 
