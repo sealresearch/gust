@@ -1,0 +1,7 @@
+# Copied or built, not kept: the registry comes from cli/registry.json, the libraries from `build.sh lib`.
+/sealresearch/_registry.json
+/sealresearch/_native/
+/dist/
+/build/
+*.egg-info/
+__pycache__/
