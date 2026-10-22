@@ -28,7 +28,7 @@ It runs on the device: natively on x86-64 and ARM64, and in a browser tab throug
 and no Python in the path.
 
 - **Small**: 22 million parameters in 11.5 MB of model files, 4-bit weights throughout.
-- **Fast**: about 39 ms per request on 8 threads in WebAssembly, and under 100 ms on every benchmark we run.
+- **Fast**: about 39 ms per request on 8 threads in WebAssembly, and a median under 80 ms on every benchmark we run.
 - **Exact**: Relay does not write its calls one token at a time. It reads the request and the tool schemas together,
   then points at the answer, so it cannot invent a value that is not in the request, and it is unusually good at filling
   slots. That is also where its limits come from, and they are listed below.
@@ -150,7 +150,7 @@ For scale, three of the larger models we ran:
 - The table shows 7 of the 12 evaluations. The rest (DSTC8, SNIPS 7-way, Glaive, BitAgent, ATIS), the other larger
   models, and how each benchmark was scored are in the [write-up](https://seal.computer/research/relay-1).
 - The Sealed set is our own held-out set. Nobody, including us, has trained on it.
-- Speed: about 39 ms per request on 8 threads in WebAssembly, and under 100 ms on every benchmark with the prefilter,
+- Speed: about 39 ms per request on 8 threads in WebAssembly, and a median under 80 ms on every benchmark with the prefilter,
   even with 100 tools once their vectors are cached.
 
 ## Training
