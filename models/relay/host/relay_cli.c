@@ -3,7 +3,7 @@
      relay <model dir> <pred dir> [--eval eval] [--suites a,b] [--tokenizer path] [--gate G --gate2 G2]
            [--no-require] [--no-fixes] [--prefilter] [--pk 10] [--budget 600] [--threads N]
      relay <model dir> --record '{"text": ..., "tools": [...]}' [--explain | --trace | --trace-ops]
-     relay <model dir> --record-file request.json [--prefilter] [--explain | --trace | --trace-ops] */
+     relay <model dir> --record-file request.json [--prefilter] [--explain | --trace | --trace-ops] [--repeat N] */
 #include "relay.h"
 #include "relay_host.h"
 #include "gust.h"
@@ -74,9 +74,25 @@ int main(int argc, char **argv) {
         one = owned_record;
     }
     if (one) {
-        char *c = flag(argc, argv, "--trace-ops") ? relay_trace_ops(r, one, (size_t)-1) :
-                  flag(argc, argv, "--trace") ? relay_trace(r, one, (size_t)-1) :
-                  flag(argc, argv, "--explain") ? relay_explain(r, one, (size_t)-1) : relay_call(r, one, (size_t)-1);
+        /* The first run's result is printed. With --repeat N the request runs N times in all, and the timing of the
+           runs goes to stderr: "timing: n=N first=MS median=MS best=MS ms". */
+        int n = atoi(opt(argc, argv, "--repeat", "1"));
+        if (n < 1) n = 1;
+        if (n > 10000) n = 10000;
+        double *ms = malloc((size_t)n * sizeof *ms);
+        char *c = NULL;
+        for (int i = 0; i < n; i++) {
+            const double t = now_ms();
+            char *got = flag(argc, argv, "--trace-ops") ? relay_trace_ops(r, one, (size_t)-1) :
+                        flag(argc, argv, "--trace") ? relay_trace(r, one, (size_t)-1) :
+                        flag(argc, argv, "--explain") ? relay_explain(r, one, (size_t)-1) : relay_call(r, one, (size_t)-1);
+            ms[i] = now_ms() - t;
+            if (i == 0) c = got; else relay_free(got);
+        }
+        const double first = ms[0];
+        qsort(ms, (size_t)n, sizeof *ms, cmpd);
+        fprintf(stderr, "timing: n=%d first=%.2f median=%.2f best=%.2f ms\n", n, first, ms[n / 2], ms[0]);
+        free(ms);
         printf("%s\n", c ? c : "invalid record");
         const int status = c ? 0 : 1;
         relay_free(c);

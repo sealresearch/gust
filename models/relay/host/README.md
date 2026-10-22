@@ -41,6 +41,10 @@ out/relay-x64.exe relay-model --record-file request.json --prefilter --trace > t
 `--prefilter` enables retrieval in the CLI, as it does for ordinary calls. The C and JavaScript APIs enable it by
 default when the prefilter artifact is available. `--explain` remains the smaller decision-only view.
 
+The CLI reports how long a request took on stderr (`timing: n=1 first=... median=... best=... ms`). `--repeat N` runs
+the request N times in one process and reports the median and the best, which is how to measure warm latency; only
+the first result is printed.
+
 Events show the selected ISA and configuration, retrieval scores, ranks and retained tools, vector-cache hits,
 tool-vector lengths, actual request tokens, schema-field token caps, joint-sequence chunks and tool names, graph
 begin/end names, valid rows and status codes (zero means success), and required-argument filtering. `result` supplies
