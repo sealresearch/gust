@@ -62,9 +62,9 @@ jobs:
           GUST_TOY: "1"
         run: |
           case "$RUNNER_OS" in
-            Windows) target=lib-windows-x64 ;;
-            macOS) target=lib-macos-arm64 ;;
-            *) target=lib-linux-x64 ;;
+            Windows) target=lib-windows-x64; echo "LIB_PATH=out/lib/windows-x64/gust.dll" >> "$GITHUB_ENV" ;;
+            macOS) target=lib-macos-arm64; echo "LIB_PATH=out/lib/macos-arm64/libgust.dylib" >> "$GITHUB_ENV" ;;
+            *) target=lib-linux-x64; echo "LIB_PATH=out/lib/linux-x64/libgust.so" >> "$GITHUB_ENV" ;;
           esac
           ZIG=zig bash build.sh $target
       - name: The model API tests (toy models)
@@ -80,6 +80,23 @@ jobs:
       - name: The Python package tests
         working-directory: packages/python
         run: PYTHONPATH=. RELAY_MODEL_DIR="$GITHUB_WORKSPACE/relay-cache/relay-1" python -W error::ResourceWarning -m unittest discover -s tests -v
+      - uses: dtolnay/rust-toolchain@stable
+      - name: The command line with the library
+        run: |
+          here() { (cd "$1" && { pwd -W 2>/dev/null || pwd; }); }
+          export SEALPUP_TEST_LIB="$(here "$(dirname "$LIB_PATH")")/$(basename "$LIB_PATH")"
+          export SEALPUP_TEST_MODEL="$(here relay-cache/relay-1)"
+          (cd cli && cargo test)
+          (cd cli && cargo build --release)
+          # end to end: install Relay (its program and weights from the real release and Hugging Face), then ask the same
+          # requests through the program and through this library
+          exe=cli/target/release/sealpup
+          [ "$RUNNER_OS" = Windows ] && exe=$exe.exe
+          export SEALPUP_HOME="$RUNNER_TEMP/sealpup-home"
+          export SEALPUP_LIBRARY="$SEALPUP_TEST_LIB"
+          $exe install relay-1
+          python cli/scripts/compare_engines.py "$exe"
+          $exe doctor
 
   cli:
     strategy:

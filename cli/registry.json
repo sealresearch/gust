@@ -8,6 +8,8 @@
       "repo": "sealresearch/relay",
       "revision": "main",
       "runner": "relay",
+      "engine": "gust",
+      "engine_id": "relay-1",
       "research": "https://seal.computer/research/relay-1",
       "files": [
         {
@@ -45,6 +47,19 @@
   },
   "aliases": {
     "relay": "relay-1"
+  },
+  "engines": {
+    "gust": {
+      "repo": "sealresearch/gust",
+      "tag": "v0.2.0",
+      "assets": {
+        "windows-x86_64": "gust-windows-x64.dll",
+        "linux-x86_64": "gust-linux-x64.so",
+        "linux-aarch64": "gust-linux-arm64.so",
+        "macos-aarch64": "gust-macos-arm64.dylib",
+        "macos-x86_64": "gust-macos-x64.dylib"
+      }
+    }
   },
   "runners": {
     "relay": {

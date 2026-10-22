@@ -22,6 +22,18 @@ pub fn runner_path(runner: &str, tag: &str) -> PathBuf {
     home().join("runtimes").join(runner).join(tag).join(exe)
 }
 
+/// Where the downloaded Gust library is kept, by release tag.
+pub fn engine_path(engine: &str, tag: &str) -> PathBuf {
+    let file = if cfg!(windows) {
+        format!("{engine}.dll")
+    } else if cfg!(target_os = "macos") {
+        format!("lib{engine}.dylib")
+    } else {
+        format!("lib{engine}.so")
+    };
+    home().join("runtimes").join(engine).join(tag).join(file)
+}
+
 /// What an install leaves next to the files, so `list` and `info` do not have to guess.
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Installed {
@@ -29,6 +41,9 @@ pub struct Installed {
     /// Seconds since the Unix epoch.
     pub installed_at: u64,
     pub runtime_tag: String,
+    /// The tag of the library the install fetched, when there was one.
+    #[serde(default)]
+    pub engine_tag: String,
     pub files: Vec<String>,
 }
 
@@ -67,8 +82,13 @@ mod tests {
     fn manifests_round_trip() {
         let dir = std::env::temp_dir().join(format!("sealpup-store-test-{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
-        let m =
-            Installed { id: "relay-1".into(), installed_at: 7, runtime_tag: "v0.1.0".into(), files: vec!["a".into()] };
+        let m = Installed {
+            id: "relay-1".into(),
+            installed_at: 7,
+            runtime_tag: "v0.1.0".into(),
+            engine_tag: "v0.2.0".into(),
+            files: vec!["a".into()],
+        };
         write_manifest(&dir, &m).unwrap();
         let back: Installed = serde_json::from_str(&fs::read_to_string(dir.join(MANIFEST)).unwrap()).unwrap();
         assert_eq!(back.id, "relay-1");

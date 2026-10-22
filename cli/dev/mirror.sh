@@ -18,7 +18,9 @@ set -euo pipefail
 root=$(cd "$(dirname "$0")/../.." && pwd)
 weights=${1:-$root/../relay}
 dev=${2:-$HOME/.sealpup-dev}
-tag=$(sed -n 's/.*"tag": *"\([^"]*\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
+# The release that holds sealpup and its library (the engine's tag), and the older one that holds the models' programs.
+tag=$(sed -n '/"engines"/,/"runners"/ s/.*"tag": *"\([^"]*\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
+runner_tag=$(sed -n '/"runners"/,$ s/.*"tag": *"\([^"]*\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
 hf_repo=$(sed -n 's/.*"repo": *"\(sealresearch\/relay\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
 
 [[ -f $weights/relay.gust ]] || { echo "no Relay weights in $weights (pass the folder as the first argument)" >&2; exit 1; }
@@ -26,10 +28,15 @@ hf_repo=$(sed -n 's/.*"repo": *"\(sealresearch\/relay\)".*/\1/p' "$root/cli/regi
 
 hf="$dev/mirror/hf/$hf_repo/resolve/main"
 gh="$dev/mirror/gh/sealresearch/gust/releases/download/$tag"
+gh_runner="$dev/mirror/gh/sealresearch/gust/releases/download/$runner_tag"
 rm -rf "$dev/mirror"
-mkdir -p "$hf" "$gh"
+mkdir -p "$hf" "$gh" "$gh_runner"
 cp "$weights"/relay* "$hf/"
 cp "$root"/out/release/relay-* "$gh/"
+cp "$root"/out/release/relay-* "$gh_runner/"
+# the Gust library for every platform, if it was built (ZIG=... ./build.sh lib-release)
+cp "$root"/out/release/gust-* "$gh/" 2>/dev/null || true
+(cd "$gh_runner" && rm -f SHA256SUMS && sha256sum -- * > SHA256SUMS)
 
 # sealpup itself, named for the platform it was built on, so cli/install.sh and cli/install.ps1 can be tried too.
 case "$(uname -s)" in

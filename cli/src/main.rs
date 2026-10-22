@@ -1,6 +1,7 @@
 //! sealpup: install Seal's on-device models and run them.
 
 mod art;
+mod engine;
 mod net;
 mod registry;
 mod run;
@@ -235,29 +236,42 @@ fn install(out: Term, err: Term, args: &Args) -> Res {
 
     // The program that runs the model, from the release of the Gust repository, checked against the release's checksums.
     let program = store::runner_path(&model.runner, &runner.tag);
-    if program.exists() && !force {
-        println!(
-            "  {} {}  {}  {}",
-            out.ok("✓"),
-            pad(&format!("{} {}", model.runner, runner.tag), 22),
-            rpad("", 8),
-            out.dim("already here")
-        );
-    } else {
-        let release = format!("{}/{}/releases/download/{}", net::github_base(), runner.repo, runner.tag);
-        let sums = net::parse_sums(&net::fetch_text(&format!("{release}/SHA256SUMS"))?);
-        let sha =
-            sums.get(asset).ok_or_else(|| fail(format!("the release {} has no checksum for {asset}", runner.tag)))?;
-        let label = format!("{} {}", model.runner, runner.tag);
-        let done = net::download(&format!("{release}/{asset}"), &program, Some(sha), None, &label, err)?;
-        make_executable(&program)?;
-        println!(
-            "  {} {}  {}  {}",
-            out.ok("✓"),
-            pad(&label, 22),
-            rpad(&bytes(done.bytes), 8),
-            out.dim(&format!("{:.1}s", done.secs))
-        );
+    ensure_release_file(out, err, &format!("{} {}", model.runner, runner.tag), runner, asset, &program, force, true)?;
+
+    // The Gust library, which runs the model in this process. One file serves every model, so a model without one
+    // (or a machine without a build of it) simply keeps using the program above.
+    let mut engine_tag = String::new();
+    if let Some((name, engine, _)) = reg.engine(model, &id) {
+        let label = format!("{name} {}", engine.tag);
+        if let Some(path) = std::env::var_os("SEALPUP_LIBRARY") {
+            println!(
+                "  {} {}  {}",
+                out.ok("✓"),
+                pad(&label, 22),
+                out.dim(&format!("using {}", PathBuf::from(path).display()))
+            );
+        } else {
+            match engine.asset() {
+                Ok(asset) => {
+                    let dest = store::engine_path(name, &engine.tag);
+                    match ensure_release_file(out, err, &label, engine, asset, &dest, force, false) {
+                        Ok(()) => engine_tag = engine.tag.clone(),
+                        Err(f) => println!(
+                            "  {} {}  {}",
+                            out.dim("·"),
+                            pad(&label, 22),
+                            out.dim(&format!("not available ({}); the program above will be used", f.message))
+                        ),
+                    }
+                }
+                Err(e) => println!(
+                    "  {} {}  {}",
+                    out.dim("·"),
+                    pad(&label, 22),
+                    out.dim(&format!("{e}; the program above will be used"))
+                ),
+            }
+        }
     }
 
     // The weights, from Hugging Face, checked against the checksums this version of sealpup was released with.
@@ -292,6 +306,7 @@ fn install(out: Term, err: Term, args: &Args) -> Res {
             .map(|d| d.as_secs())
             .unwrap_or(0),
         runtime_tag: runner.tag.clone(),
+        engine_tag,
         files: model.files.iter().map(|f| f.name.clone()).collect(),
     };
     store::write_manifest(&dir, &manifest)?;
@@ -306,6 +321,40 @@ fn install(out: Term, err: Term, args: &Args) -> Res {
     println!();
     println!("  {}  sealpup run {id} \"Set an alarm for 6:45 tomorrow\"", out.dim("try"));
     println!();
+    Ok(())
+}
+
+/// Downloads a file of a release of the Gust repository, checked against that release's `SHA256SUMS`, unless it is already
+/// here. `executable` marks a program.
+#[allow(clippy::too_many_arguments)]
+fn ensure_release_file(
+    out: Term,
+    err: Term,
+    label: &str,
+    from: &registry::Runner,
+    asset: &str,
+    dest: &std::path::Path,
+    force: bool,
+    executable: bool,
+) -> Res {
+    if dest.exists() && !force {
+        println!("  {} {}  {}  {}", out.ok("✓"), pad(label, 22), rpad("", 8), out.dim("already here"));
+        return Ok(());
+    }
+    let release = format!("{}/{}/releases/download/{}", net::github_base(), from.repo, from.tag);
+    let sums = net::parse_sums(&net::fetch_text(&format!("{release}/SHA256SUMS"))?);
+    let sha = sums.get(asset).ok_or_else(|| fail(format!("the release {} has no checksum for {asset}", from.tag)))?;
+    let done = net::download(&format!("{release}/{asset}"), dest, Some(sha), None, label, err)?;
+    if executable {
+        make_executable(dest)?;
+    }
+    println!(
+        "  {} {}  {}  {}",
+        out.ok("✓"),
+        pad(label, 22),
+        rpad(&bytes(done.bytes), 8),
+        out.dim(&format!("{:.1}s", done.secs))
+    );
     Ok(())
 }
 
@@ -330,8 +379,46 @@ fn default_threads() -> usize {
 /// What a command needs to talk to an installed model.
 struct Ready {
     id: String,
-    program: PathBuf,
-    dir: PathBuf,
+    backend: run::Backend,
+}
+
+/// Which way to reach a model: `SEALPUP_ENGINE=library` or `runner` forces one; otherwise the library is used when it is
+/// there and works, and the program that runs the model when it is not.
+#[derive(PartialEq, Clone, Copy)]
+enum Way {
+    Auto,
+    Library,
+    Runner,
+}
+
+fn way() -> Result<Way, Fail> {
+    match std::env::var("SEALPUP_ENGINE").unwrap_or_default().trim().to_lowercase().as_str() {
+        "" | "auto" => Ok(Way::Auto),
+        "library" => Ok(Way::Library),
+        "runner" => Ok(Way::Runner),
+        other => Err(usage(format!("SEALPUP_ENGINE is \"{other}\", not auto, library or runner"), "sealpup help")),
+    }
+}
+
+/// The installed library for a model, if it has one: $SEALPUP_LIBRARY, or the file the install fetched.
+fn library_path(reg: &Registry, model: &registry::Model, id: &str) -> Option<PathBuf> {
+    if let Some(p) = std::env::var_os("SEALPUP_LIBRARY") {
+        return Some(PathBuf::from(p));
+    }
+    let (name, engine, _) = reg.engine(model, id)?;
+    Some(store::engine_path(name, &engine.tag))
+}
+
+fn open_library(
+    reg: &Registry,
+    model: &registry::Model,
+    id: &str,
+    prefilter: bool,
+) -> Result<Option<run::Library>, String> {
+    let Some((_, _, engine_id)) = reg.engine(model, id) else { return Ok(None) };
+    let Some(path) = library_path(reg, model, id).filter(|p| p.exists()) else { return Ok(None) };
+    let engine = engine::Engine::load(&path)?;
+    run::Library::open(engine, &engine_id, &store::model_dir(id), &model.files, prefilter).map(Some)
 }
 
 fn ready(args: &Args, command: &str) -> Result<Ready, Fail> {
@@ -340,15 +427,35 @@ fn ready(args: &Args, command: &str) -> Result<Ready, Fail> {
     if !is_installed(&id, model) {
         return Err(hinted(format!("{id} is not installed"), format!("sealpup install {id}")));
     }
+    let way = way()?;
+    let mut library_problem = None;
+    if way != Way::Runner {
+        match open_library(&reg, model, &id, !args.flag("no-prefilter")) {
+            Ok(Some(lib)) => return Ok(Ready { id, backend: run::Backend::Library(lib) }),
+            Ok(None) if way == Way::Library => {
+                return Err(hinted(
+                    format!("there is no library for {id} on this machine"),
+                    format!("sealpup install {id} --force"),
+                ))
+            }
+            Ok(None) => {}
+            Err(e) if way == Way::Library => return Err(fail(e)),
+            Err(e) => library_problem = Some(e),
+        }
+    }
     let runner = reg.runner(model);
     let program = store::runner_path(&model.runner, &runner.tag);
     if !program.exists() {
+        let why = library_problem.map(|e| format!(" (and the library did not work: {e})")).unwrap_or_default();
         return Err(hinted(
-            format!("the program that runs {id} is missing ({} {})", model.runner, runner.tag),
+            format!("the program that runs {id} is missing ({} {}){why}", model.runner, runner.tag),
             format!("sealpup install {id} --force"),
         ));
     }
-    Ok(Ready { id: id.clone(), program, dir: store::model_dir(&id) })
+    if let Some(e) = library_problem {
+        eprintln!("  note: the Gust library could not be used ({e}); running the model with its own program instead");
+    }
+    Ok(Ready { id: id.clone(), backend: run::Backend::Runner { program, dir: store::model_dir(&id) } })
 }
 
 fn run_cmd(out: Term, _err: Term, args: &Args) -> Res {
@@ -363,7 +470,7 @@ fn run_cmd(out: Term, _err: Term, args: &Args) -> Res {
 
     let ask = |request: &str| -> Result<run::Outcome, Fail> {
         let record = tools::record(request, &toolset.tools, &now)?;
-        Ok(run::invoke(&r.program, &r.dir, &record, threads, prefilter, 1)?)
+        Ok(r.backend.invoke(&record, threads, prefilter, 1)?)
     };
 
     // Where the requests come from: the command line, a conversation at the keyboard, or standard input.
@@ -483,7 +590,7 @@ fn bench(out: Term, _err: Term, args: &Args) -> Res {
     let mut rows = Vec::new();
     let (mut load_ms, mut isa) = (0.0, String::new());
     for t in counts {
-        let outcome = run::invoke(&r.program, &r.dir, &record, t, true, runs)?;
+        let outcome = r.backend.invoke(&record, t, true, runs)?;
         let timing = outcome.timing.ok_or_else(|| fail("the model program did not report its timing"))?;
         load_ms = outcome.load_ms;
         isa = outcome.isa.clone();
@@ -547,6 +654,9 @@ fn info(out: Term, args: &Args) -> Res {
     key("weights", format!("huggingface.co/{}", m.repo));
     key("write-up", m.research.clone());
     key("program", format!("{} {}", m.runner, runner.tag));
+    if let Some((name, engine, _)) = reg.engine(m, &id) {
+        key("library", format!("{name} {}", engine.tag));
+    }
     let status = match store::read_manifest(&id).filter(|_| is_installed(&id, m)) {
         Some(i) => format!(
             "{} installed {}  {}",
@@ -620,6 +730,23 @@ fn doctor(out: Term) -> Res {
             Ok(_) => line(None, rname, out.dim("not downloaded yet")),
         }
     }
+    for (ename, engine) in &reg.engines {
+        let path = std::env::var_os("SEALPUP_LIBRARY")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| store::engine_path(ename, &engine.tag));
+        match engine.asset() {
+            Err(e) => line(None, ename, out.dim(&format!("{e}; the models' own programs are used"))),
+            Ok(_) if path.exists() => match engine::Engine::load(&path) {
+                Ok(e) => line(
+                    Some(true),
+                    ename,
+                    format!("{} {} · {}", engine.tag, e.runtime(), out.dim(&path.display().to_string())),
+                ),
+                Err(e) => line(Some(false), ename, e),
+            },
+            Ok(_) => line(None, ename, out.dim("not downloaded yet")),
+        }
+    }
     for (id, m) in &reg.models {
         if store::read_manifest(id).is_none() {
             line(None, id, out.dim("not installed"));
@@ -642,7 +769,7 @@ fn doctor(out: Term) -> Res {
             Ok(r) => {
                 let set = tools::load(None)?;
                 let record = tools::record("Set an alarm for 6:45 tomorrow", &set.tools, "2026-10-18T09:00:00")?;
-                match run::invoke(&r.program, &r.dir, &record, 1, true, 3) {
+                match r.backend.invoke(&record, 1, true, 3) {
                     Ok(o) => {
                         let first =
                             run::calls(&o.answer).first().and_then(|c| c["tool"].as_str().map(|s| s.to_string()));
@@ -650,7 +777,7 @@ fn doctor(out: Term) -> Res {
                         line(
                             Some(first.as_deref() == Some("set_alarm")),
                             "self-test",
-                            format!("{} answered in {t} · {}", r.id, out.dim(&o.isa)),
+                            format!("{} answered in {t} · {} · {}", r.id, r.backend.name(), out.dim(&o.isa)),
                         );
                     }
                     Err(e) => line(Some(false), "self-test", e),
