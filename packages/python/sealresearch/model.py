@@ -228,10 +228,18 @@ class Model:
                               progress=progress)
         if threads is not None:
             set_threads(threads)
+        return cls.open(model_id, files, options=options)
+
+    @classmethod
+    def open(cls, model_id, files=(), *, options=None):
+        """Opens a model from files you already have in memory (a dict or a list of (name, bytes)): no registry, no download.
+        `load` is this plus finding the files."""
+        files = list(files.items()) if isinstance(files, dict) else list(files)
         arr = (File * max(len(files), 1))()
         keep = []
         for i, (name, data) in enumerate(files):
             n = name.encode()
+            data = bytes(data)
             keep += [n, data]
             arr[i].name, arr[i].data, arr[i].len = n, ctypes.cast(ctypes.c_char_p(data), c_void_p), len(data)
         handle = c_void_p()

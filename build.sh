@@ -32,7 +32,9 @@ x86() {
 sharedlib() { # platform, zig target, file name, thread define, "x86" for the three-variant build
   local plat=$1 tgt=$2 file=$3 thr=$4 arch=${5:-} out=out/lib/$1 obj=out/obj-lib-$1
   local srcs="$HOST sdk/src/model.c models/relay/sdk/relay_model.c"
-  local flags="$CFLAGS -target $tgt -fPIC -DGUST_THREADS -D$thr -Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY -fvisibility=hidden"
+  local toy=""
+  if [ -n "${GUST_TOY:-}" ]; then srcs="$srcs sdk/tests/toy_models.c"; toy="-DGUST_MODEL_TOY"; fi  # test models for bindings: GUST_TOY=1
+  local flags="$CFLAGS -target $tgt -fPIC -DGUST_THREADS -D$thr -Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY $toy -fvisibility=hidden"
   mkdir -p $out $obj
   if [ "$arch" = x86 ]; then
     $ZIG cc $flags -DGUST_VARIANT=base -c runtime/src/gust.c -o $obj/base.o
