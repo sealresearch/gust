@@ -33,6 +33,7 @@ back is in `model.info`, so new models need no new code here.
 ```python
 model = sr.Model.load("relay-1", options={...}, threads=4, directory=None, cache=True, optional=True)
 model.info                      # a dict: id, kind, inputs, outputs, options, files, license
+model.memory_bytes              # bytes the loaded model holds
 model.run(*inputs, options={})  # one call; one output comes back as itself, several as a list
 model.stream(options={})        # for models that work on live input
 model.close()                   # or use `with`
@@ -40,6 +41,7 @@ model.close()                   # or use `with`
 sr.models()                     # the models in this build
 sr.describe("relay-1")          # a model's description, before it is opened
 sr.set_threads(4)               # threads for the operators, for the whole process
+sr.runtime()                    # the instruction set in use, e.g. "x86-64 AVX-512 VNNI"
 ```
 
 What goes in, by Python type:

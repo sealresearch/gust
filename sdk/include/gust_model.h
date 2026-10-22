@@ -96,6 +96,9 @@ GUST_MODEL_API const char *const *gust_model_ids(void);
    needs. NULL when there is no such model. The string lives as long as the library. */
 GUST_MODEL_API const char *gust_model_describe(const char *id);
 
+/* The instruction set this build runs, such as "x86-64 AVX-512 VNNI" or "AArch64 NEON dotprod". */
+GUST_MODEL_API const char *gust_model_runtime(void);
+
 /* Threads for the operators, for the whole process (1 to 16; 0 asks for the number of cores, at most 8). Returns the
    count in use. The answers are the same for every count. */
 GUST_MODEL_API uint32_t gust_model_set_threads(uint32_t threads);
@@ -104,6 +107,8 @@ GUST_MODEL_API uint32_t gust_model_set_threads(uint32_t threads);
 GUST_MODEL_API gust_model_status gust_model_open(const char *id, const gust_model_file *files, size_t n_files,
                                                   const char *options_json, gust_model **out);
 GUST_MODEL_API const char *gust_model_info(const gust_model *);   /* the same JSON as gust_model_describe */
+/* Bytes the loaded model holds (its graphs and buffers), or 0 when the model does not say. */
+GUST_MODEL_API size_t gust_model_memory(const gust_model *);
 /* One input set in, one result out. Which and how many buffers it takes is in the description. */
 GUST_MODEL_API gust_model_status gust_model_run(gust_model *, const gust_buffer *in, size_t n_in, const char *options_json,
                                                 gust_result **out);
@@ -141,6 +146,7 @@ typedef struct {
     int (*stream_finish)(void *stream, char *err, size_t errlen);
     void (*stream_close)(void *stream);
     void (*close)(void *state);
+    size_t (*memory)(void *state);   /* optional: bytes the model holds */
 } gust_model_def;
 
 /* Adds a model to this process. The definition must outlive the process (a static is right). A second model with the

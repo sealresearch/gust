@@ -8,7 +8,7 @@ from ctypes import byref, c_int, c_void_p, string_at
 from . import _fetch
 from ._lib import (BYTES, IMAGE_GRAY8, IMAGE_RGBA8, JSON, PCM_F32, PCM_I16, STATUS, TEXT, Buffer, File, lib)
 
-__all__ = ["GustError", "Model", "Stream", "Pcm", "Image", "models", "describe", "set_threads"]
+__all__ = ["GustError", "Model", "Stream", "Pcm", "Image", "models", "describe", "set_threads", "runtime"]
 
 
 class GustError(RuntimeError):
@@ -186,6 +186,11 @@ def describe(model_id):
     return json.loads(text.decode("utf-8"))
 
 
+def runtime():
+    """The instruction set this build runs, such as "x86-64 AVX-512 VNNI"."""
+    return lib.gust_model_runtime().decode()
+
+
 def set_threads(threads):
     """Threads for the operators, for the whole process (0 asks for the number of cores, up to 8). The answers do not
     depend on it. Returns the count in use."""
@@ -265,6 +270,12 @@ class Model:
         handle = c_void_p()
         _check(lib.gust_stream_open(self._h, _options(options), byref(handle)))
         return Stream(handle, self)
+
+    @property
+    def memory_bytes(self):
+        """Bytes the loaded model holds (0 when the model does not say)."""
+        self._open()
+        return int(lib.gust_model_memory(self._h))
 
     def _open(self):
         if not self._h:

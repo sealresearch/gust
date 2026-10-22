@@ -66,6 +66,11 @@ class ModelTests(unittest.TestCase):
             sr.describe("no-such-model")
         self.assertEqual(e.exception.status, "unknown_model")
 
+    def test_runtime_and_memory(self):
+        self.assertTrue(sr.runtime())
+        with sr.Model.load("relay-1", directory=DIR) as model:
+            self.assertGreater(model.memory_bytes, 10_000_000)
+
     def test_run_from_a_folder(self):
         with sr.Model.load("relay-1", directory=DIR) as model:
             self.assertEqual(model.run(REQUEST), EXPECTED)
