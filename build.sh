@@ -26,10 +26,35 @@ x86() {
   $ZIG cc $CFLAGS -target $tgt $extra -DGUST_THREADS -DGUST_VARIANT=vnni -mavx2 -mavx512f -mavx512vl -mavx512bw -mavx512vnni -mevex512 -c runtime/src/gust.c -o $obj/vnni.o
   $ZIG cc $CFLAGS -target $tgt $extra -DGUST_THREADS $obj/base.o $obj/avx2.o $obj/vnni.o runtime/src/dispatch_x86.c $main -o $out
 }
+# The model library for Python, Rust and other languages: the runtime, the Relay host and the model API in one shared
+# library, out/lib/<platform>/gust.dll, libgust.so or libgust.dylib. Linux is built against glibc 2.17 so that one file
+# runs on every distribution a Python wheel targets (manylinux2014).
+sharedlib() { # platform, zig target, file name, thread define, "x86" for the three-variant build
+  local plat=$1 tgt=$2 file=$3 thr=$4 arch=${5:-} out=out/lib/$1 obj=out/obj-lib-$1
+  local srcs="$HOST sdk/src/model.c models/relay/sdk/relay_model.c"
+  local flags="$CFLAGS -target $tgt -fPIC -DGUST_THREADS -D$thr -Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY -fvisibility=hidden"
+  mkdir -p $out $obj
+  if [ "$arch" = x86 ]; then
+    $ZIG cc $flags -DGUST_VARIANT=base -c runtime/src/gust.c -o $obj/base.o
+    $ZIG cc $flags -DGUST_VARIANT=avx2 -mavx2 -c runtime/src/gust.c -o $obj/avx2.o
+    $ZIG cc $flags -DGUST_VARIANT=vnni -mavx2 -mavx512f -mavx512vl -mavx512bw -mavx512vnni -mevex512 -c runtime/src/gust.c -o $obj/vnni.o
+    $ZIG cc $flags -shared $obj/base.o $obj/avx2.o $obj/vnni.o runtime/src/dispatch_x86.c $srcs -o $out/$file
+  else
+    $ZIG cc $flags -shared runtime/src/gust.c $srcs -o $out/$file
+  fi
+}
 build() {
   case $1 in
   x64)       x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/relay-x64.exe ;;
   bench-x64) x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/gust-bench-x64.exe runtime/tools/gust_bench.c ;;
+  lib-windows-x64) sharedlib windows-x64 x86_64-windows-gnu gust.dll GUST_THREADS_WIN32 x86 ;;
+  lib-linux-x64)   sharedlib linux-x64 x86_64-linux-gnu.2.17 libgust.so GUST_THREADS_POSIX x86 ;;
+  lib-linux-arm64) sharedlib linux-arm64 aarch64-linux-gnu.2.17 libgust.so GUST_THREADS_POSIX ;;
+  lib-macos-x64)   sharedlib macos-x64 x86_64-macos libgust.dylib GUST_THREADS_POSIX x86 ;;
+  lib-macos-arm64) sharedlib macos-arm64 aarch64-macos libgust.dylib GUST_THREADS_POSIX ;;
+  lib)       for t in lib-windows-x64 lib-linux-x64 lib-linux-arm64 lib-macos-x64 lib-macos-arm64; do build "$t"; done ;;
+  # The model API (sdk/include/gust_model.h) with Relay built in, and its tests: out/sdk-test-x64.exe [MODEL_DIR RECORDS]
+  test-sdk-x64) x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/sdk-test-x64.exe "-Isdk/include -DGUST_MODEL_RELAY $HOST sdk/src/model.c models/relay/sdk/relay_model.c sdk/tests/abi_test.c" ;;
   bench-calls-x64) x86 x86_64-windows-gnu -DGUST_THREADS_WIN32 out/relay-calls-x64.exe "-Imodels/relay/host $HOST models/relay/tools/bench_calls.c -lpsapi" ;;
   bench-calls-arm64) $ZIG cc $CFLAGS -target aarch64-linux-musl -static -DGUST_THREADS -DGUST_THREADS_POSIX \
                -Imodels/relay/host runtime/src/gust.c $HOST models/relay/tools/bench_calls.c -o out/relay-calls-arm64 ;;
