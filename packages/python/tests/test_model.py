@@ -183,5 +183,66 @@ class ValueTests(unittest.TestCase):
             sr.Image(b"", 1, 1, "bgr")
 
 
+@unittest.skipUnless("toy-gain" in sr.models(), "build the library with GUST_TOY=1 to test streams and audio")
+class ToyModelTests(unittest.TestCase):
+    """Models that have nothing to do with Relay, built into test libraries: text in and out, and streaming audio."""
+
+    def test_text_model(self):
+        with sr.Model.open("toy-upper", options={"suffix": "!"}) as m:
+            self.assertEqual(m.info["id"], "toy-upper")
+            self.assertEqual(m.run("hello"), "HELLO!")
+            with self.assertRaises(sr.GustError) as e:
+                m.run({"not": "text"})
+            self.assertEqual(e.exception.status, "input")
+            with self.assertRaises(sr.GustError) as e:
+                m.stream()
+            self.assertEqual(e.exception.status, "unsupported")
+
+    def test_audio_stream(self):
+        import array
+        with sr.Model.open("toy-gain", options={"gain": 3}) as m:
+            with m.stream() as s:
+                self.assertEqual(s.pull(), [])
+                self.assertFalse(s.done)
+                s.push(sr.Pcm(array.array("f", [1, 2, 3, 4]), 16000))
+                (out,) = s.pull()
+                self.assertIsInstance(out, sr.Pcm)
+                self.assertEqual((out.rate, out.channels, out.dtype), (16000, 1, "float32"))
+                self.assertEqual(list(out.samples), [3, 6, 9, 12])
+                s.push(sr.Pcm([-1.0, 0.5], 16000))
+                s.finish()
+                with self.assertRaises(sr.GustError) as e:
+                    s.push(sr.Pcm([0.0], 16000))
+                self.assertEqual(e.exception.status, "state")
+                rest = list(s.drain())
+                self.assertTrue(s.done)
+                self.assertEqual(list(rest[0].samples), [-3.0, 1.5])
+                with self.assertRaises(sr.GustError) as e:
+                    s.push("text")
+                self.assertIn(e.exception.status, ("state", "input"))
+
+    def test_a_stream_outlives_its_model(self):
+        import array
+        m = sr.Model.open("toy-gain")
+        s = m.stream()
+        m.close()
+        s.push(sr.Pcm(array.array("f", [1.0, 2.0]), 8000))
+        s.finish()
+        outs = list(s.drain())
+        self.assertEqual(list(outs[0].samples), [2.0, 4.0])
+        s.close()
+
+    def test_numpy_audio_when_available(self):
+        try:
+            import numpy as np
+        except ImportError:
+            self.skipTest("numpy is not installed")
+        with sr.Model.open("toy-gain") as m, m.stream() as s:
+            s.push(sr.Pcm(np.array([0.25, -0.5], dtype="float32"), 22050))
+            (out,) = s.pull()
+            self.assertIsInstance(out.samples, np.ndarray)
+            self.assertEqual(out.samples.tolist(), [0.5, -1.0])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -56,6 +56,10 @@ static int g_builtin_done;
 #ifdef GUST_MODEL_RELAY
 const gust_model_def *gust_model_relay_def(void);
 #endif
+#ifdef GUST_MODEL_TOY /* test models for bindings: build with GUST_TOY=1 */
+const gust_model_def *gust_model_toy_upper_def(void);
+const gust_model_def *gust_model_toy_gain_def(void);
+#endif
 
 static gust_model_status fail(gust_model_status s, const char *fmt, ...) {
     va_list ap;
@@ -89,6 +93,10 @@ static void builtin_locked(void) {
     g_builtin_done = 1;
 #ifdef GUST_MODEL_RELAY
     register_locked(gust_model_relay_def());
+#endif
+#ifdef GUST_MODEL_TOY
+    register_locked(gust_model_toy_upper_def());
+    register_locked(gust_model_toy_gain_def());
 #endif
 }
 static const gust_model_def *find_locked(const char *id) {

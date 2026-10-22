@@ -57,7 +57,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Build the library for this system
+      - name: Build the library for this system (with the toy models, so the Python tests can try streams and audio)
+        env:
+          GUST_TOY: "1"
         run: |
           case "$RUNNER_OS" in
             Windows) target=lib-windows-x64 ;;
