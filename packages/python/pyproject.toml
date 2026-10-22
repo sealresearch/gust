@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sealresearch"
+version = "0.1.0"
+description = "Seal Research's on-device models from Python: one interface for every model, on the Gust runtime."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Seal Research", email = "support@seal.computer" }]
+requires-python = ">=3.9"
+keywords = ["on-device", "tool-calling", "function-calling", "speech", "gust", "quantized"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+numpy = ["numpy"]
+
+[project.urls]
+Homepage = "https://seal.computer"
+Repository = "https://github.com/sealresearch/gust"
+Issues = "https://github.com/sealresearch/gust/issues"
+
+[tool.setuptools]
+packages = ["sealresearch"]
+
+[tool.setuptools.package-data]
+sealresearch = ["_registry.json", "_native/*"]
