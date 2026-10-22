@@ -8,7 +8,7 @@
 The same calls work for every model: what a model takes in and gives back is in `model.info`.
 """
 from ._fetch import cache_dir, registry
-from .model import GustError, Image, Model, Pcm, Stream, describe, models, set_threads
+from .model import GustError, Image, Model, Pcm, Stream, describe, models, runtime, set_threads
 
 __version__ = "0.1.0"
-__all__ = ["GustError", "Image", "Model", "Pcm", "Stream", "cache_dir", "describe", "models", "registry", "set_threads"]
+__all__ = ["GustError", "Image", "Model", "Pcm", "Stream", "cache_dir", "describe", "models", "registry", "runtime", "set_threads"]

@@ -27,7 +27,7 @@ The whole interface is in [`include/gust_model.h`](include/gust_model.h), about 
 | `gust_model_open`, `gust_model_run`, `gust_model_close` | open from files, one call, close |
 | `gust_stream_open`, `_push`, `_pull`, `_finish`, `_close` | live input (speech in) or long output (speech out): push what you have, pull what is ready |
 | `gust_result_count`, `_get`, `_free` | read the outputs, then free them |
-| `gust_model_set_threads` | threads for the operators, for the whole process |
+| `gust_model_set_threads`, `gust_model_runtime`, `gust_model_memory` | threads for the operators (for the whole process), the instruction set in use, bytes a model holds |
 | `gust_model_last_error` | why the last call on this thread failed |
 
 Rules that make it safe to bind: handles are opaque; the library never keeps a pointer you gave it after a call returns (model
@@ -41,6 +41,7 @@ not depend on the thread count, the CPU or the platform.
 |---|---|---|
 | Python | [`packages/python`](../packages/python) | `pip install sealresearch`: generic over every model, wheels for five platforms |
 | JavaScript | [`packages/relay`](../packages/relay) | `npm install @sealresearch/relay`: Relay in Node and in the browser, on the WebAssembly build |
+| Rust | [`cli`](../cli) | the `sealpup` command line loads `libgust` and runs models through it (`cli/src/engine.rs`, about 200 lines) |
 | C, C++ | this folder | link `libgust` and include `gust_model.h` |
 | Rust, Go and the rest | | bind the functions above; the Python package is a few hundred lines |
 

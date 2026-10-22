@@ -121,8 +121,9 @@ static int relay_run_model(void *state, const gust_buffer *in, size_t n_in, cons
 }
 
 static void relay_close_model(void *state) { relay_close((relay *)state); }
+static size_t relay_memory(void *state) { return relay_model_bytes((const relay *)state); }
 
 static const gust_model_def DEF = {sizeof(gust_model_def), "relay-1", INFO, relay_open_model, relay_run_model,
-                                   NULL, NULL, NULL, NULL, NULL, relay_close_model};
+                                   NULL, NULL, NULL, NULL, NULL, relay_close_model, relay_memory};
 
 const gust_model_def *gust_model_relay_def(void) { return &DEF; }

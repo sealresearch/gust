@@ -3,6 +3,7 @@
 #include "gust_model.h"
 #include "gust.h"
 #include <stdarg.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -226,6 +227,10 @@ gust_model_status gust_model_open(const char *id, const gust_model_file *files, 
     return GUST_MODEL_OK;
 }
 const char *gust_model_info(const gust_model *m) { return m ? m->def->info_json : NULL; }
+size_t gust_model_memory(const gust_model *m) {
+    return m && m->def->size >= offsetof(gust_model_def, memory) + sizeof m->def->memory && m->def->memory ? m->def->memory(m->state) : 0;
+}
+const char *gust_model_runtime(void) { return gust_variant(); }
 
 gust_model_status gust_model_run(gust_model *m, const gust_buffer *in, size_t n_in, const char *options_json,
                                  gust_result **out) {
