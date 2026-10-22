@@ -51,18 +51,20 @@ other languages can bind too.
 ## From JavaScript
 
 ```sh
-npm install @sealresearch/relay
+npm install @sealresearch/gust
 ```
 
 ```js
-import { Relay } from '@sealresearch/relay';
+import { Model } from '@sealresearch/gust';
 
-const relay = await Relay.load();   // downloads Relay 1 the first time (14 MB), checks it, and keeps it
-relay.predict({ text: 'Show me the Eiffel Tower on the map', tools });   // [{ tool: 'show_map', args: { query: 'Eiffel Tower' } }]
+const relay = await Model.load('relay-1');   // downloads the files the first time, checks them, keeps them
+relay.run({ text: 'Show me the Eiffel Tower on the map', tools });   // [{ tool: 'show_map', args: { query: 'Eiffel Tower' } }]
 ```
 
-It runs in Node and in the browser on the same WebAssembly runtime, and returns the same calls as `sealpup`
-([packages/relay/README.md](packages/relay/README.md)).
+Like the Python package it is generic: every model is loaded and run the same way ([packages/js/README.md](packages/js/README.md)).
+It is the same C compiled to WebAssembly, so it runs in Node and in the browser and returns the same calls as `sealpup` and
+Python. For Relay alone there is also `@sealresearch/relay`, with a smaller surface (`relay.predict(request)`;
+[packages/relay/README.md](packages/relay/README.md)).
 
 ## Repository
 
@@ -71,7 +73,7 @@ runtime/    the Gust runtime: C, one translation unit, native and WebAssembly (s
 models/     one folder per model, with its code, tests and demo (see models/README.md)
 cli/        the sealpup command line: install models, run them, measure them (Rust, see cli/README.md)
 sdk/        the model API: one C interface for every model (see sdk/README.md)
-packages/   the Python package (sealresearch) and the npm package for Relay (@sealresearch/relay)
+packages/   the Python package (sealresearch) and the npm packages (@sealresearch/gust, and @sealresearch/relay on top of it)
 docs/       the .gust file format (docs/FORMAT.md)
 build.sh    builds the runtime, the model programs and the runtime tests with zig cc; outputs go to out/
 ```

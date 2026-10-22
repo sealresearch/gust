@@ -5,6 +5,10 @@ tools an app offers into the calls to make, or into no call when nothing fits. I
 it runs on the CPU through the [Gust](https://github.com/sealresearch/gust) WebAssembly runtime, and nothing leaves the
 device.
 
+This package is Relay with a small surface. It is a thin layer over [`@sealresearch/gust`](https://www.npmjs.com/package/@sealresearch/gust),
+which loads and runs any Gust model the same way (`Model.load('relay-1')`); use that directly if you want streams, other models
+or the typed buffers.
+
 ```sh
 npm install @sealresearch/relay
 ```

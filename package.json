@@ -1,0 +1,9 @@
+{
+  "name": "gust-workspace",
+  "private": true,
+  "description": "Links the JavaScript packages to each other while they are developed here. Nothing in this file is published.",
+  "workspaces": [
+    "packages/js",
+    "packages/relay"
+  ]
+}

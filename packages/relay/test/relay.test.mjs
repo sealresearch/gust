@@ -106,3 +106,17 @@ test('says what is wrong with a request', { skip }, async () => {
     relay.close();
   }
 });
+
+test('explains and traces', { skip }, async () => {
+  const relay = await Relay.load({ dir: DIR });
+  try {
+    const why = relay.explain(request);
+    assert.deepEqual(why.calls.map((c) => c.tool), ['show_map']);
+    assert.ok(relay.trace(request));
+    assert.ok(relay.trace(request, { operators: true }));
+    assert.equal(relay.predictJSON(request), '[{"tool": "show_map", "args": {"query": "Eiffel Tower"}}]', 'the text the native program writes');
+    assert.ok(relay.modelBytes > 20_000_000);
+  } finally {
+    relay.close();
+  }
+});

@@ -1,0 +1,43 @@
+{
+  "name": "@sealresearch/gust",
+  "version": "0.1.0",
+  "description": "The Gust model API in Node and in the browser, on WebAssembly: one interface for every model. Bit-identical to the native libraries.",
+  "keywords": ["gust", "on-device", "inference", "webassembly", "wasm", "tool-calling", "relay", "model"],
+  "license": "MIT",
+  "author": "Seal Research <support@seal.computer>",
+  "homepage": "https://seal.computer/research/gust",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sealresearch/gust.git",
+    "directory": "packages/js"
+  },
+  "bugs": "https://github.com/sealresearch/gust/issues",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "wasm",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "prepack": "node scripts/sync.mjs",
+    "test": "node --test"
+  }
+}
