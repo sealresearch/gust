@@ -1,15 +1,15 @@
-//! Where things live: `~/.seal` (or `$SEAL_HOME`), with one folder per model and one per downloaded runtime.
+//! Where things live: `~/.sealpup` (or `$SEALPUP_HOME`), with one folder per model and one per downloaded runtime.
 
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
 
 pub fn home() -> PathBuf {
-    if let Some(h) = std::env::var_os("SEAL_HOME") {
+    if let Some(h) = std::env::var_os("SEALPUP_HOME") {
         return PathBuf::from(h);
     }
     let user = std::env::var_os("USERPROFILE").or_else(|| std::env::var_os("HOME")).map(PathBuf::from);
-    user.unwrap_or_else(|| PathBuf::from(".")).join(".seal")
+    user.unwrap_or_else(|| PathBuf::from(".")).join(".sealpup")
 }
 
 pub fn model_dir(id: &str) -> PathBuf {
@@ -32,7 +32,7 @@ pub struct Installed {
     pub files: Vec<String>,
 }
 
-const MANIFEST: &str = "seal-install.json";
+const MANIFEST: &str = "sealpup-install.json";
 
 pub fn write_manifest(dir: &Path, m: &Installed) -> Result<(), String> {
     let text = serde_json::to_string_pretty(m).map_err(|e| e.to_string())?;
@@ -65,7 +65,7 @@ mod tests {
 
     #[test]
     fn manifests_round_trip() {
-        let dir = std::env::temp_dir().join(format!("seal-store-test-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("sealpup-store-test-{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
         let m =
             Installed { id: "relay-1".into(), installed_at: 7, runtime_tag: "v0.1.0".into(), files: vec!["a".into()] };

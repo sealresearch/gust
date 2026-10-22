@@ -1,5 +1,5 @@
 [package]
-name = "seal"
+name = "sealpup"
 version = "0.1.0"
 edition = "2021"
 description = "Install and run Seal's on-device models"
@@ -8,7 +8,7 @@ repository = "https://github.com/sealresearch/gust"
 rust-version = "1.75"
 
 [[bin]]
-name = "seal"
+name = "sealpup"
 path = "src/main.rs"
 
 [dependencies]

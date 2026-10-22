@@ -1,10 +1,10 @@
-# seal
+# sealpup
 
 Install Seal's on-device models and run them.
 
 ```sh
-seal install relay-1
-seal run relay-1 "Set an alarm for 6:45 tomorrow"
+sealpup install relay-1
+sealpup run relay-1 "Set an alarm for 6:45 tomorrow"
 ```
 
 ```
@@ -18,8 +18,8 @@ seal run relay-1 "Set an alarm for 6:45 tomorrow"
   19.9 ms · 9 tools read · loaded in 48 ms (21.2 MB)
 ```
 
-`seal` is one small program with no runtime to install. It downloads a model from Hugging Face, downloads the program
-that runs it from a release of this repository, checks both, and keeps them in `~/.seal`. Everything after that runs
+`sealpup` is one small program with no runtime to install. It downloads a model from Hugging Face, downloads the program
+that runs it from a release of this repository, checks both, and keeps them in `~/.sealpup`. Everything after that runs
 offline.
 
 ## Install
@@ -36,38 +36,32 @@ Windows (PowerShell):
 irm https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.ps1 | iex
 ```
 
-Homebrew:
-
-```sh
-brew install sealresearch/tap/seal
-```
-
 The scripts download the program for your platform from the latest release, check it against the release's
-`SHA256SUMS`, and put it in `~/.local/bin` (`%LOCALAPPDATA%\Programs\seal` on Windows). `SEAL_VERSION` picks a release
-and `SEAL_INSTALL` the folder. From source: `cargo install --path cli --locked`.
+`SHA256SUMS`, and put it in `~/.local/bin` (`%LOCALAPPDATA%\Programs\sealpup` on Windows). `SEALPUP_VERSION` picks a release
+and `SEALPUP_INSTALL` the folder. From source: `cargo install --path cli --locked`.
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `seal install <model>` | Download a model and the program that runs it. Files that are already here and intact are skipped; `--force` downloads again. |
-| `seal run <model> [text]` | Ask a model. With no text on a terminal it starts a conversation. |
-| `seal bench <model>` | Measure its speed on this machine, at 1, 2, 4 and 8 threads. |
-| `seal list` | The models, and which are installed. |
-| `seal info <model>` | What a model is, its size and licence, and where its files are. |
-| `seal remove <model>` | Delete a model. |
-| `seal doctor` | Verify every installed file against its checksum, and run each model once to check that it answers. |
+| `sealpup install <model>` | Download a model and the program that runs it. Files that are already here and intact are skipped; `--force` downloads again. |
+| `sealpup run <model> [text]` | Ask a model. With no text on a terminal it starts a conversation. |
+| `sealpup bench <model>` | Measure its speed on this machine, at 1, 2, 4 and 8 threads. |
+| `sealpup list` | The models, and which are installed. |
+| `sealpup info <model>` | What a model is, its size and licence, and where its files are. |
+| `sealpup remove <model>` | Delete a model. |
+| `sealpup doctor` | Verify every installed file against its checksum, and run each model once to check that it answers. |
 
 Models can be named by id (`relay-1`) or by alias (`relay`).
 
 ### Asking Relay
 
-`seal run` works the same way for every model. This section is about Relay, the first one. Relay turns a request and a list of tools into calls. Without `--tools`, `seal run` offers it a built-in set of phone
+`sealpup run` works the same way for every model. This section is about Relay, the first one. Relay turns a request and a list of tools into calls. Without `--tools`, `sealpup run` offers it a built-in set of phone
 tools (alarms, messages, weather, maps, volume, music, flashlight) so you can try it straight away. To use your own,
 give a file:
 
 ```sh
-seal run relay-1 --tools tools.json "I want a large pizza with mushrooms"
+sealpup run relay-1 --tools tools.json "I want a large pizza with mushrooms"
 ```
 
 A tools file is a JSON array of tools, or an object with a `tools` array. Tools can be written the way Relay reads them
@@ -104,7 +98,7 @@ the request, a number, a date and time, one of the options) and how sure Relay i
 | `-v` | Also show every tool's score for the request. |
 | `--no-prefilter` | Read every tool, instead of the best 10. |
 
-Requests can also come from a pipe: `echo "Play some Bowie" | seal run relay-1`.
+Requests can also come from a pipe: `echo "Play some Bowie" | sealpup run relay-1`.
 
 ## How it keeps you safe
 
@@ -119,9 +113,9 @@ Requests can also come from a pipe: `echo "Play some Bowie" | seal run relay-1`.
 
 | Variable | What it does |
 |---|---|
-| `SEAL_HOME` | Where models and programs are kept. The default is `~/.seal`. |
-| `SEAL_HF_URL` | Where to download weights from instead of `https://huggingface.co`. |
-| `SEAL_GITHUB_URL` | Where to download programs from instead of `https://github.com`. |
+| `SEALPUP_HOME` | Where models and programs are kept. The default is `~/.sealpup`. |
+| `SEALPUP_HF_URL` | Where to download weights from instead of `https://huggingface.co`. |
+| `SEALPUP_GITHUB_URL` | Where to download programs from instead of `https://github.com`. |
 | `NO_COLOR` | Turn colour off. |
 | `FORCE_COLOR` | Turn colour on when the output is not a terminal. |
 
@@ -131,27 +125,27 @@ command was used.
 ## Build, and try it before anything is published
 
 ```sh
-cargo build --release     # target/release/seal
+cargo build --release     # target/release/sealpup
 cargo test
 ```
 
-`seal install` downloads from Hugging Face and from a release of this repository. To try everything before either
-exists, `dev/mirror.sh` lays those files out in a folder on your machine and writes the settings that point `seal`
+`sealpup install` downloads from Hugging Face and from a release of this repository. To try everything before either
+exists, `dev/mirror.sh` lays those files out in a folder on your machine and writes the settings that point `sealpup`
 at it. Any URL setting also accepts a folder, as `file:///...`.
 
 ```sh
 ZIG=/path/to/zig ./build.sh release        # the Relay program for every platform
-(cd cli && cargo build --release)           # seal itself
-cli/dev/mirror.sh                           # the mirror, in ~/.seal-dev
+(cd cli && cargo build --release)           # sealpup itself
+cli/dev/mirror.sh                           # the mirror, in ~/.sealpup-dev
 
-source ~/.seal-dev/env.sh                   # PowerShell: . ~/.seal-dev/env.ps1
-seal install relay-1
+source ~/.sealpup-dev/env.sh                   # PowerShell: . ~/.sealpup-dev/env.ps1
+sealpup install relay-1
 ```
 
-The settings keep the models in `~/.seal-dev/home`, apart from a real `~/.seal`. `cli/install.sh` and `cli/install.ps1`
-work against the same mirror, because the settings include `SEAL_GITHUB_URL` and `SEAL_VERSION`.
+The settings keep the models in `~/.sealpup-dev/home`, apart from a real `~/.sealpup`. `cli/install.sh` and `cli/install.ps1`
+work against the same mirror, because the settings include `SEALPUP_GITHUB_URL` and `SEALPUP_VERSION`.
 
 The Homebrew formula is generated for each release: `cli/scripts/formula.sh TAG SHA256SUMS`. The release workflow
-attaches it as `seal.rb`; copy it into the `sealresearch/homebrew-tap` repository as `Formula/seal.rb`.
+attaches it as `sealpup.rb`; copy it into the `sealresearch/homebrew-tap` repository as `Formula/sealpup.rb`.
 
 The list of models and their checksums is `registry.json`. Adding a model means adding an entry there.

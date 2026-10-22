@@ -1,7 +1,7 @@
 name: release
 
-# Push a tag like v0.1.0. The release gets the Relay command line for every platform (what `seal install` downloads),
-# the seal program for every platform, a SHA256SUMS file for all of them, and the Homebrew formula (seal.rb).
+# Push a tag like v0.1.0. The release gets the Relay command line for every platform (what `sealpup install` downloads),
+# the sealpup program for every platform, a SHA256SUMS file for all of them, and the Homebrew formula (sealpup.rb).
 
 on:
   push:
@@ -28,11 +28,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - { os: ubuntu-22.04, name: seal-linux-x64 }
-          - { os: ubuntu-22.04-arm, name: seal-linux-arm64 }
-          - { os: macos-13, name: seal-macos-x64 }
-          - { os: macos-latest, name: seal-macos-arm64 }
-          - { os: windows-latest, name: seal-windows-x64.exe }
+          - { os: ubuntu-22.04, name: sealpup-linux-x64 }
+          - { os: ubuntu-22.04-arm, name: sealpup-linux-arm64 }
+          - { os: macos-13, name: sealpup-macos-x64 }
+          - { os: macos-latest, name: sealpup-macos-arm64 }
+          - { os: windows-latest, name: sealpup-windows-x64.exe }
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -43,7 +43,7 @@ jobs:
       - run: cargo build --release --manifest-path cli/Cargo.toml
       - name: Name the program for its platform
         run: |
-          if [ "${{ runner.os }}" = "Windows" ]; then src=cli/target/release/seal.exe; else src=cli/target/release/seal; fi
+          if [ "${{ runner.os }}" = "Windows" ]; then src=cli/target/release/sealpup.exe; else src=cli/target/release/sealpup; fi
           mkdir -p dist
           cp "$src" "dist/${{ matrix.name }}"
       - uses: actions/upload-artifact@v4
@@ -63,7 +63,7 @@ jobs:
       - name: Checksums
         run: cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS
       - name: Homebrew formula, to copy into the sealresearch/homebrew-tap repository
-        run: bash cli/scripts/formula.sh "$GITHUB_REF_NAME" dist/SHA256SUMS > dist/seal.rb
+        run: bash cli/scripts/formula.sh "$GITHUB_REF_NAME" dist/SHA256SUMS > dist/sealpup.rb
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}

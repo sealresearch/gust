@@ -75,12 +75,12 @@ load in `transformers`.
 
 ## Get started
 
-With the [`seal` command line](https://github.com/sealresearch/gust/tree/main/cli), which downloads Relay and the
+With the [`sealpup` command line](https://github.com/sealresearch/gust/tree/main/cli), which downloads Relay and the
 program that runs it, and checks both:
 
 ```sh
-seal install relay-1
-seal run relay-1 "Show me the Eiffel Tower on the map"
+sealpup install relay-1
+sealpup run relay-1 "Show me the Eiffel Tower on the map"
 ```
 
 ```
@@ -88,7 +88,7 @@ seal run relay-1 "Show me the Eiffel Tower on the map"
       query  "Eiffel Tower"  copied     100%
 ```
 
-`seal run` offers a built-in set of phone tools; `--tools tools.json` gives it your own.
+`sealpup run` offers a built-in set of phone tools; `--tools tools.json` gives it your own.
 
 Or build the host from the [Gust repository](https://github.com/sealresearch/gust) yourself. You need
 [zig](https://ziglang.org).

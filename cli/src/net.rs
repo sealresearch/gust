@@ -9,14 +9,14 @@ use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
-/// Where Hugging Face is. `SEAL_HF_URL` points it at a mirror.
+/// Where Hugging Face is. `SEALPUP_HF_URL` points it at a mirror.
 pub fn hf_base() -> String {
-    base("SEAL_HF_URL", "https://huggingface.co")
+    base("SEALPUP_HF_URL", "https://huggingface.co")
 }
 
-/// Where GitHub releases are. `SEAL_GITHUB_URL` points it at a mirror.
+/// Where GitHub releases are. `SEALPUP_GITHUB_URL` points it at a mirror.
 pub fn github_base() -> String {
-    base("SEAL_GITHUB_URL", "https://github.com")
+    base("SEALPUP_GITHUB_URL", "https://github.com")
 }
 
 fn base(var: &str, default: &str) -> String {
@@ -25,7 +25,7 @@ fn base(var: &str, default: &str) -> String {
 
 fn agent() -> ureq::Agent {
     ureq::AgentBuilder::new()
-        .user_agent(concat!("seal/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("sealpup/", env!("CARGO_PKG_VERSION")))
         .timeout_connect(Duration::from_secs(15))
         .timeout_read(Duration::from_secs(60))
         .build()
@@ -203,7 +203,7 @@ mod tests {
 
     #[test]
     fn a_mirror_on_disk_downloads_and_verifies_like_a_server() {
-        let dir = std::env::temp_dir().join(format!("seal-mirror-test-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("sealpup-mirror-test-{}", std::process::id()));
         fs::create_dir_all(&dir).unwrap();
         fs::write(dir.join("a.bin"), b"abc").unwrap();
         let url = format!("file://{}", dir.join("a.bin").display()).replace(std::path::MAIN_SEPARATOR, "/");
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn hashing_a_file_matches_a_known_digest() {
-        let path = std::env::temp_dir().join(format!("seal-sha-test-{}", std::process::id()));
+        let path = std::env::temp_dir().join(format!("sealpup-sha-test-{}", std::process::id()));
         fs::write(&path, b"abc").unwrap();
         assert_eq!(sha256_file(&path).unwrap(), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
         fs::remove_file(&path).unwrap();

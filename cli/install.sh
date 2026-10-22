@@ -1,17 +1,17 @@
 #!/bin/sh
-# Install the seal command line.
+# Install the sealpup command line.
 #
 #   curl -fsSL https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.sh | sh
 #
 # Settings, as environment variables:
-#   SEAL_VERSION      a release tag such as v0.1.0 (default: the latest release)
-#   SEAL_INSTALL      where to put the program (default: ~/.local/bin)
-#   SEAL_GITHUB_URL   download from a mirror instead of https://github.com
+#   SEALPUP_VERSION      a release tag such as v0.1.0 (default: the latest release)
+#   SEALPUP_INSTALL      where to put the program (default: ~/.local/bin)
+#   SEALPUP_GITHUB_URL   download from a mirror instead of https://github.com
 set -eu
 
 repo="sealresearch/gust"
-base="${SEAL_GITHUB_URL:-https://github.com}"
-dir="${SEAL_INSTALL:-$HOME/.local/bin}"
+base="${SEALPUP_GITHUB_URL:-https://github.com}"
+dir="${SEALPUP_INSTALL:-$HOME/.local/bin}"
 
 say() { printf '  %s\n' "$*"; }
 die() { printf '\n  ✗ %s\n\n' "$*" >&2; exit 1; }
@@ -20,23 +20,23 @@ case "$(uname -s)" in
   Linux) os=linux ;;
   Darwin) os=macos ;;
   MINGW* | MSYS* | CYGWIN*) os=windows ;;
-  *) die "seal does not have a build for $(uname -s)" ;;
+  *) die "sealpup does not have a build for $(uname -s)" ;;
 esac
 case "$(uname -m)" in
   x86_64 | amd64) arch=x64 ;;
   arm64 | aarch64) arch=arm64 ;;
-  *) die "seal does not have a build for $(uname -m)" ;;
+  *) die "sealpup does not have a build for $(uname -m)" ;;
 esac
-asset="seal-$os-$arch"
-exe=seal
+asset="sealpup-$os-$arch"
+exe=sealpup
 if [ "$os" = windows ]; then
   [ "$arch" = x64 ] || die "on Windows only the x64 build exists"
   asset="$asset.exe"
-  exe=seal.exe
+  exe=sealpup.exe
 fi
 
-if [ -n "${SEAL_VERSION:-}" ]; then
-  release="$base/$repo/releases/download/$SEAL_VERSION"
+if [ -n "${SEALPUP_VERSION:-}" ]; then
+  release="$base/$repo/releases/download/$SEALPUP_VERSION"
 else
   release="$base/$repo/releases/latest/download"
 fi
@@ -47,7 +47,7 @@ fetch() { # url file
   elif command -v wget >/dev/null 2>&1; then
     wget -qO "$2" "$1" || die "cannot download $1"
   else
-    die "I need curl or wget to download seal"
+    die "I need curl or wget to download sealpup"
   fi
 }
 
@@ -65,7 +65,7 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
 printf '\n'
-say "Installing seal ($os $arch)"
+say "Installing sealpup ($os $arch)"
 fetch "$release/SHA256SUMS" "$tmp/SHA256SUMS"
 fetch "$release/$asset" "$tmp/$asset"
 
@@ -78,9 +78,9 @@ mv "$tmp/$asset" "$dir/$exe"
 chmod +x "$dir/$exe"
 
 version=$("$dir/$exe" --version 2>/dev/null || true)
-printf '\n  ✓ %s  %s\n' "${version:-seal}" "$dir/$exe"
+printf '\n  ✓ %s  %s\n' "${version:-sealpup}" "$dir/$exe"
 case ":$PATH:" in
   *":$dir:"*) ;;
   *) printf '\n  %s is not on your PATH. Add it with:\n\n    export PATH="%s:$PATH"\n' "$dir" "$dir" ;;
 esac
-printf '\n  Next: seal install relay-1\n\n'
+printf '\n  Next: sealpup install relay-1\n\n'

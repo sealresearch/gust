@@ -38,5 +38,5 @@ states what the model was trained on and its licence. Code here is MIT; each mod
    its sources, the evaluation, and the limits. The card is written here, in `MODEL_CARD.md` with its `assets/`, and copied to the weights
    repository as its `README.md` and `assets/`, so the two do not drift apart.
 4. **An entry in the command line's registry**, [`cli/registry.json`](../cli/registry.json): the model's files with their
-   SHA-256 checksums, and the program that runs it. After that `seal install <name>` works.
+   SHA-256 checksums, and the program that runs it. After that `sealpup install <name>` works.
 5. **A row in the table above** and in the [README](../README.md).

@@ -7,6 +7,8 @@ runtime written in C. It gives the same output bits on x86-64, ARM64 and WebAsse
 a model behaves the same wherever it runs. Models are released here as they are ready, each with its code in this
 repository and its weights on [Hugging Face](https://huggingface.co/sealresearch).
 
+**[Try Relay in your browser](https://seal.computer/research/relay-1#try-it)** • [Write-up](https://seal.computer/research/relay-1) • [Weights](https://huggingface.co/sealresearch/relay)
+
 ## Models
 
 | Model | What it does | Size | Weights |
@@ -17,16 +19,16 @@ More will be added here as they are released. Each model lives in its own folder
 
 ## Try a model
 
-The quickest way is the `seal` command line ([cli/](cli/README.md)). It downloads a model and the program that runs it,
+The quickest way is the `sealpup` command line ([cli/](cli/README.md)). It downloads a model and the program that runs it,
 checks both, and runs them:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.sh | sh   # or: brew install sealresearch/tap/seal
-seal install relay-1
-seal run relay-1 "Show me the Eiffel Tower on the map"
+curl -fsSL https://raw.githubusercontent.com/sealresearch/gust/main/cli/install.sh | sh
+sealpup install relay-1
+sealpup run relay-1 "Show me the Eiffel Tower on the map"
 ```
 
-`seal list` shows every model that can be installed. To build a model yourself, see its README; for Relay, that is
+`sealpup list` shows every model that can be installed. To build a model yourself, see its README; for Relay, that is
 [models/relay/README.md](models/relay/README.md).
 
 ## Repository
@@ -34,7 +36,7 @@ seal run relay-1 "Show me the Eiffel Tower on the map"
 ```
 runtime/    the Gust runtime: C, one translation unit, native and WebAssembly (see runtime/README.md)
 models/     one folder per model, with its code, tests and demo (see models/README.md)
-cli/        the seal command line: install models, run them, measure them (Rust, see cli/README.md)
+cli/        the sealpup command line: install models, run them, measure them (Rust, see cli/README.md)
 build.sh    builds the runtime, the model programs and the runtime tests with zig cc; outputs go to out/
 ```
 

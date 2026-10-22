@@ -1,4 +1,4 @@
-//! seal: install Seal's on-device models and run them.
+//! sealpup: install Seal's on-device models and run them.
 
 mod art;
 mod net;
@@ -61,7 +61,7 @@ impl Args {
             None => Ok(None),
             Some(v) => match v.parse::<usize>() {
                 Ok(n) if n > 0 => Ok(Some(n)),
-                _ => Err(usage(format!("--{name} needs a whole number above zero, not \"{v}\""), "seal help")),
+                _ => Err(usage(format!("--{name} needs a whole number above zero, not \"{v}\""), "sealpup help")),
             },
         }
     }
@@ -87,7 +87,7 @@ fn parse_args(raw: &[String]) -> Result<Args, Fail> {
             let short = &arg[1..];
             match SHORT.iter().find(|(s, _)| *s == short) {
                 Some((_, long)) => long.to_string(),
-                None => return Err(usage(format!("unknown option {arg}"), "seal help")),
+                None => return Err(usage(format!("unknown option {arg}"), "sealpup help")),
             }
         } else {
             a.positional.push(arg.clone());
@@ -101,7 +101,7 @@ fn parse_args(raw: &[String]) -> Result<Args, Fail> {
                     a.values.insert(name, v.clone());
                     i += 1;
                 }
-                None => return Err(usage(format!("--{name} needs a value"), "seal help")),
+                None => return Err(usage(format!("--{name} needs a value"), "sealpup help")),
             }
         } else {
             a.flags.insert(name);
@@ -141,7 +141,7 @@ fn dispatch(out: Term, err: Term, raw: &[String]) -> Res {
             Ok(())
         }
         "version" | "--version" | "-V" => {
-            println!("seal {VERSION}");
+            println!("sealpup {VERSION}");
             Ok(())
         }
         "install" => install(out, err, &parse_args(rest)?),
@@ -151,7 +151,7 @@ fn dispatch(out: Term, err: Term, raw: &[String]) -> Res {
         "info" => info(out, &parse_args(rest)?),
         "remove" | "rm" | "uninstall" => remove(out, &parse_args(rest)?),
         "doctor" => doctor(out),
-        other => Err(usage(format!("unknown command \"{other}\""), "seal help")),
+        other => Err(usage(format!("unknown command \"{other}\""), "sealpup help")),
     }
 }
 
@@ -160,7 +160,7 @@ fn banner(t: Term) {
     let art = art::seal();
     let side = [
         String::new(),
-        format!("{}  {}", t.bold("seal"), t.dim(VERSION)),
+        format!("{}  {}", t.bold("sealpup"), t.dim(VERSION)),
         t.dim(TAGLINE),
         String::new(),
         String::new(),
@@ -186,16 +186,16 @@ fn banner(t: Term) {
     println!();
     println!("  {}", t.dim("options for run:  --tools FILE   --threads N   --now TIME   --json   --lines   -v"));
     println!();
-    println!("  {}  seal install relay-1 && seal run relay-1 \"Set an alarm for 6:45 tomorrow\"", t.dim("try"));
+    println!("  {}  sealpup install relay-1 && sealpup run relay-1 \"Set an alarm for 6:45 tomorrow\"", t.dim("try"));
     println!();
 }
 
 fn model_arg<'a>(reg: &'a Registry, args: &Args, command: &str) -> Result<(String, &'a registry::Model), Fail> {
     let name = args.positional.first().ok_or_else(|| {
         let known: Vec<&str> = reg.models.keys().map(|s| s.as_str()).collect();
-        usage(format!("seal {command} needs a model"), format!("models: {}", known.join(", ")))
+        usage(format!("sealpup {command} needs a model"), format!("models: {}", known.join(", ")))
     })?;
-    let id = reg.resolve(name).map_err(|m| usage(m, "seal list"))?;
+    let id = reg.resolve(name).map_err(|m| usage(m, "sealpup list"))?;
     let model = &reg.models[&id];
     Ok((id, model))
 }
@@ -260,7 +260,7 @@ fn install(out: Term, err: Term, args: &Args) -> Res {
         );
     }
 
-    // The weights, from Hugging Face, checked against the checksums this version of seal was released with.
+    // The weights, from Hugging Face, checked against the checksums this version of sealpup was released with.
     let dir = store::model_dir(&id);
     for f in &model.files {
         let dest = dir.join(&f.name);
@@ -304,7 +304,7 @@ fn install(out: Term, err: Term, args: &Args) -> Res {
         out.dim(&dir.display().to_string())
     );
     println!();
-    println!("  {}  seal run {id} \"Set an alarm for 6:45 tomorrow\"", out.dim("try"));
+    println!("  {}  sealpup run {id} \"Set an alarm for 6:45 tomorrow\"", out.dim("try"));
     println!();
     Ok(())
 }
@@ -338,14 +338,14 @@ fn ready(args: &Args, command: &str) -> Result<Ready, Fail> {
     let reg = registry::load();
     let (id, model) = model_arg(&reg, args, command)?;
     if !is_installed(&id, model) {
-        return Err(hinted(format!("{id} is not installed"), format!("seal install {id}")));
+        return Err(hinted(format!("{id} is not installed"), format!("sealpup install {id}")));
     }
     let runner = reg.runner(model);
     let program = store::runner_path(&model.runner, &runner.tag);
     if !program.exists() {
         return Err(hinted(
             format!("the program that runs {id} is missing ({} {})", model.runner, runner.tag),
-            format!("seal install {id} --force"),
+            format!("sealpup install {id} --force"),
         ));
     }
     Ok(Ready { id: id.clone(), program, dir: store::model_dir(&id) })
@@ -385,11 +385,11 @@ fn run_cmd(out: Term, _err: Term, args: &Args) -> Res {
             requests.push(all.trim().to_string());
         }
         if requests.is_empty() {
-            return Err(usage("there is no request to run", format!("seal run {} \"your request\"", r.id)));
+            return Err(usage("there is no request to run", format!("sealpup run {} \"your request\"", r.id)));
         }
     }
     if conversation && json {
-        return Err(usage("--json needs a request", format!("seal run {} --json \"your request\"", r.id)));
+        return Err(usage("--json needs a request", format!("sealpup run {} --json \"your request\"", r.id)));
     }
 
     if json {
@@ -520,7 +520,7 @@ fn list(out: Term) -> Res {
         println!("  {}", out.dim(&format!("{}{}", " ".repeat(10 + 2), m.task)));
     }
     println!();
-    println!("  {}", out.dim("seal install <model>   ·   seal info <model>"));
+    println!("  {}", out.dim("sealpup install <model>   ·   sealpup info <model>"));
     println!();
     Ok(())
 }
@@ -633,7 +633,7 @@ fn doctor(out: Term) -> Res {
             .map(|f| f.name.as_str())
             .collect();
         if !bad.is_empty() {
-            line(Some(false), id, format!("damaged: {}. Run: seal install {id} --force", bad.join(", ")));
+            line(Some(false), id, format!("damaged: {}. Run: sealpup install {id} --force", bad.join(", ")));
             continue;
         }
         line(Some(true), id, format!("{} files verified", m.files.len()));

@@ -37,7 +37,7 @@ pub fn invoke(
     repeat: u32,
 ) -> Result<Outcome, String> {
     let file = std::env::temp_dir().join(format!(
-        "seal-{}-{}.json",
+        "sealpup-{}-{}.json",
         std::process::id(),
         COUNTER.fetch_add(1, Ordering::Relaxed)
     ));

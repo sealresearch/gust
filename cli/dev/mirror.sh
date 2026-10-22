@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-# Try seal before anything is published: lay out the files that Hugging Face and the GitHub release will serve in a
-# folder on this machine, and write the settings that make seal read from it.
+# Try sealpup before anything is published: lay out the files that Hugging Face and the GitHub release will serve in a
+# folder on this machine, and write the settings that make sealpup read from it.
 #
 #   ZIG=/path/to/zig ./build.sh release        # the Relay program for every platform, in out/release/
-#   (cd cli && cargo build --release)           # seal itself
+#   (cd cli && cargo build --release)           # sealpup itself
 #   cli/dev/mirror.sh [WEIGHTS_DIR [DEV_DIR]]
 #
 # WEIGHTS_DIR holds the Relay files from the Hugging Face repository (default: ../relay next to this repository).
-# DEV_DIR is where the mirror, a separate SEAL_HOME and the settings go (default: ~/.seal-dev).
+# DEV_DIR is where the mirror, a separate SEALPUP_HOME and the settings go (default: ~/.sealpup-dev).
 #
 # Then, in a new shell:
-#   source ~/.seal-dev/env.sh          # bash, zsh
-#   . ~/.seal-dev/env.ps1              # PowerShell
-#   seal install relay-1
+#   source ~/.sealpup-dev/env.sh          # bash, zsh
+#   . ~/.sealpup-dev/env.ps1              # PowerShell
+#   sealpup install relay-1
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/../.." && pwd)
 weights=${1:-$root/../relay}
-dev=${2:-$HOME/.seal-dev}
+dev=${2:-$HOME/.sealpup-dev}
 tag=$(sed -n 's/.*"tag": *"\([^"]*\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
 hf_repo=$(sed -n 's/.*"repo": *"\(sealresearch\/relay\)".*/\1/p' "$root/cli/registry.json" | head -n 1)
 
@@ -31,17 +31,17 @@ mkdir -p "$hf" "$gh"
 cp "$weights"/relay* "$hf/"
 cp "$root"/out/release/relay-* "$gh/"
 
-# seal itself, named for the platform it was built on, so cli/install.sh and cli/install.ps1 can be tried too.
+# sealpup itself, named for the platform it was built on, so cli/install.sh and cli/install.ps1 can be tried too.
 case "$(uname -s)" in
   Linux) os=linux ;; Darwin) os=macos ;; *) os=windows ;;
 esac
 case "$(uname -m)" in
   arm64 | aarch64) arch=arm64 ;; *) arch=x64 ;;
 esac
-built="$root/cli/target/release/seal"
+built="$root/cli/target/release/sealpup"
 [[ -f $built.exe ]] && built="$built.exe"
 if [[ -f $built ]]; then
-  name="seal-$os-$arch"
+  name="sealpup-$os-$arch"
   [[ $os == windows ]] && name="$name.exe"
   cp "$built" "$gh/$name"
 fi
@@ -53,21 +53,21 @@ mirror=$(here "$dev/mirror")
 home=$(here "$dev")/home
 
 cat > "$dev/env.sh" <<EOF
-export SEAL_HOME="$home"
-export SEAL_HF_URL="file://$mirror/hf"
-export SEAL_GITHUB_URL="file://$mirror/gh"
-export SEAL_VERSION="$tag"
-echo "seal now reads from the local mirror ($mirror) and keeps its files in $home"
+export SEALPUP_HOME="$home"
+export SEALPUP_HF_URL="file://$mirror/hf"
+export SEALPUP_GITHUB_URL="file://$mirror/gh"
+export SEALPUP_VERSION="$tag"
+echo "sealpup now reads from the local mirror ($mirror) and keeps its files in $home"
 EOF
 cat > "$dev/env.ps1" <<EOF
-\$env:SEAL_HOME = "$home"
-\$env:SEAL_HF_URL = "file://$mirror/hf"
-\$env:SEAL_GITHUB_URL = "file://$mirror/gh"
-\$env:SEAL_VERSION = "$tag"
-Write-Host "seal now reads from the local mirror ($mirror) and keeps its files in $home"
+\$env:SEALPUP_HOME = "$home"
+\$env:SEALPUP_HF_URL = "file://$mirror/hf"
+\$env:SEALPUP_GITHUB_URL = "file://$mirror/gh"
+\$env:SEALPUP_VERSION = "$tag"
+Write-Host "sealpup now reads from the local mirror ($mirror) and keeps its files in $home"
 EOF
 
 echo "mirror ready in $dev"
 echo "  source $dev/env.sh        (bash)"
 echo "  . $dev/env.ps1            (PowerShell)"
-echo "then: seal install relay-1"
+echo "then: sealpup install relay-1"
