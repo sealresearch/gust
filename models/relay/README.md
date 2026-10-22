@@ -11,6 +11,7 @@ every value it returns comes from the request or the schema.
 | Runs on | x86-64, ARM64 and WebAssembly, with no GPU and no Python |
 | Weights | [`sealresearch/relay`](https://huggingface.co/sealresearch/relay) on Hugging Face, CC BY 4.0 |
 | Write-up | [seal.computer/research/relay-1](https://seal.computer/research/relay-1) |
+| Model card | [MODEL_CARD.md](MODEL_CARD.md): training data, evaluation, limits, attributions |
 
 ## Use it
 
