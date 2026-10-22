@@ -47,7 +47,12 @@ struct gust_stream {
     int finished;
 };
 
-static _Thread_local char g_error[ERR_BYTES];
+#if defined(__wasm__)
+#define GUST_TLS /* the model API is only called from the main thread in WebAssembly; workers run operators */
+#else
+#define GUST_TLS _Thread_local
+#endif
+static GUST_TLS char g_error[ERR_BYTES];
 static const gust_model_def *g_models[MAX_MODELS];
 static size_t g_count;
 static const char *g_ids[MAX_MODELS + 1];
@@ -141,6 +146,10 @@ uint32_t gust_model_set_threads(uint32_t threads) {
     threads = gust_threads_start(threads);
     unlock();
     return threads;
+#elif defined(__wasm__) && defined(GUST_THREADS)
+    extern uint32_t gust_set_threads(uint32_t); /* runtime/src/float32/threads.c */
+    /* WebAssembly threads: the host has started the workers (they park in gust_worker), this lets operators use them */
+    return gust_set_threads(threads);
 #else
     return 1;
 #endif

@@ -17,7 +17,7 @@ static const char INFO[] =
     "\"options\":{\"open\":{\"threads\":\"1 to 16, default 1\",\"prefilter\":\"rank long tool lists first, default true\","
     "\"k\":\"tools the prefilter keeps, default 10\",\"budget\":\"tool tokens the prefilter keeps, default 600\","
     "\"fixes\":\"host decoding fixes, default true\",\"require\":\"drop calls that leave a required argument empty, default true\"},"
-    "\"run\":{\"mode\":\"calls (default), explain or trace\"}},"
+    "\"run\":{\"mode\":\"calls (default), explain, trace or trace_ops\"}},"
     "\"files\":{\"required\":[\"relay.gust\",\"relay-route.gust\",\"relay-anchor.gust\",\"relay-args.gust\","
     "\"relay-tokenizer.json\"],\"optional\":[\"relay-prefilter.bin\"]},"
     "\"streaming\":false,\"license\":{\"code\":\"MIT\",\"weights\":\"CC BY 4.0\"}}";
@@ -96,7 +96,7 @@ static int relay_run_model(void *state, const gust_buffer *in, size_t n_in, cons
             return GUST_MODEL_E_INPUT;
         }
     }
-    int mode = 0; /* 0 calls, 1 explain, 2 trace */
+    int mode = 0; /* 0 calls, 1 explain, 2 trace, 3 trace with the operators */
     if (options_json && options_json[0]) {
         rh_arena a = {0};
         const jnode *j = rh_json_parse(&a, options_json, strlen(options_json));
@@ -104,12 +104,14 @@ static int relay_run_model(void *state, const gust_buffer *in, size_t n_in, cons
         if (m && m->t == J_STR) {
             if (m->len == 7 && !memcmp(m->s, "explain", 7)) mode = 1;
             else if (m->len == 5 && !memcmp(m->s, "trace", 5)) mode = 2;
+            else if (m->len == 9 && !memcmp(m->s, "trace_ops", 9)) mode = 3;
         }
         rh_arena_free(&a);
     }
     relay *r = (relay *)state;
     char *text = mode == 1 ? relay_explain(r, (const char *)in[0].data, in[0].len)
                  : mode == 2 ? relay_trace(r, (const char *)in[0].data, in[0].len)
+                 : mode == 3 ? relay_trace_ops(r, (const char *)in[0].data, in[0].len)
                              : relay_call(r, (const char *)in[0].data, in[0].len);
     if (!text) {
         snprintf(err, errlen, "the request is not valid JSON");

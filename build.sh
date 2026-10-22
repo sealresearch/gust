@@ -10,6 +10,12 @@ CFLAGS="-std=c11 -O2 -Wall -Wextra -Wno-missing-field-initializers -fno-math-err
 HOST=$(ls models/relay/host/*.c | grep -v -E 'relay_cli.c|relay_wasm.c')
 CLI="runtime/src/gust.c $HOST models/relay/host/relay_cli.c"
 WASM="runtime/src/gust.c $HOST models/relay/host/relay_wasm.c -DRELAY_NO_FILES -mexec-model=reactor -Wl,--strip-debug -Wl,-z,stack-size=1048576"
+# The model API (sdk/include/gust_model.h) as WebAssembly for the JavaScript package: the runtime, the Relay host and the API in one
+# module (a WASI reactor with no file system). GUST_TOY=1 adds the test models; WASM_OUT=dir puts the modules there.
+MODELS_WASM="-Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY runtime/src/gust.c $HOST sdk/src/model.c models/relay/sdk/relay_model.c
+  -DRELAY_NO_FILES -mexec-model=reactor -fvisibility=hidden -Wl,--strip-debug -Wl,-z,stack-size=1048576"
+for f in malloc free gust_model_abi_version gust_model_last_error gust_model_ids gust_model_describe gust_model_runtime gust_model_set_threads          gust_model_open gust_model_info gust_model_memory gust_model_run gust_model_close gust_stream_open gust_stream_push gust_stream_pull          gust_stream_finish gust_stream_close gust_result_count gust_result_get gust_result_free; do MODELS_WASM="$MODELS_WASM -Wl,--export=$f"; done
+[ -n "${GUST_TOY:-}" ] && MODELS_WASM="$MODELS_WASM -DGUST_MODEL_TOY sdk/tests/toy_models.c"
 MT="-matomics -mbulk-memory -DGUST_THREADS -Wl,--import-memory -Wl,--export-memory -Wl,--shared-memory
   -Wl,--max-memory=1073741824 -Wl,--export=__stack_pointer"
 # The runtime alone for JavaScript hosts (models/*/js): no libc, fixed 128 MiB memory, the public entry points.
@@ -96,6 +102,8 @@ build() {
   wasm-mt)      $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 -mrelaxed-simd $MT $WASM -o out/relay-mt.wasm ;;
   wasm-simd)    $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $WASM -o out/relay-simd.wasm ;;
   wasm-mt-simd) $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MT $WASM -o out/relay-mt-simd.wasm ;;
+  wasm-models)    $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MODELS_WASM -o "${WASM_OUT:-out}/gust-models.wasm" ;;
+  wasm-models-mt) $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MT $MODELS_WASM -o "${WASM_OUT:-out}/gust-models-mt.wasm" ;;
   runtime-wasm)      $ZIG cc $CFLAGS -target wasm32-freestanding -msimd128 -mrelaxed-simd $RUNTIME_WASM -o out/gust.wasm ;;
   runtime-wasm-simd) $ZIG cc $CFLAGS -target wasm32-freestanding -msimd128 $RUNTIME_WASM -o out/gust-simd.wasm ;;
   test-t5)  $ZIG cc $CFLAGS -target x86_64-windows-gnu runtime/tests/t5.c -o out/t5.exe ;;
