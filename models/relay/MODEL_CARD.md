@@ -46,7 +46,7 @@ failure cases: **[Relay 1: a tool-calling model that reads instead of writes](ht
 
 ## Model details
 
-| | |
+| Property | Value |
 |---|---|
 | Developer | Seal Research |
 | Model type | Encoder with routing, anchor and argument heads; outputs are value programs over the request text |

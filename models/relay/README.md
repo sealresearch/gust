@@ -4,7 +4,7 @@ Relay 1 turns what a person said and the tools an app offers into the calls to m
 fits. It reads instead of writes: it looks at the request and the tool schemas together and points at the answer, so
 every value it returns comes from the request or the schema.
 
-|  |  |
+| Property | Value |
 |---|---|
 | Parameters | 21.8M (12.5M encoder, 6.1M embeddings, 3.1M heads) |
 | Size | 11.5 MB of model files, with 4-bit weights |

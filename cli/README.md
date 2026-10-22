@@ -48,7 +48,7 @@ and `SEAL_INSTALL` the folder. From source: `cargo install --path cli --locked`.
 
 ## Commands
 
-| | |
+| Command | What it does |
 |---|---|
 | `seal install <model>` | Download a model and the program that runs it. Files that are already here and intact are skipped; `--force` downloads again. |
 | `seal run <model> [text]` | Ask a model. With no text on a terminal it starts a conversation. |
@@ -94,7 +94,7 @@ or without a `function` wrapper):
 The words of the request that a value was read from are underlined, and every value shows how it was found (copied from
 the request, a number, a date and time, one of the options) and how sure Relay is.
 
-| Option | |
+| Option | What it does |
 |---|---|
 | `--tools FILE` | The tools to offer. |
 | `--threads N` | Threads to use. The default is the number of cores, up to 8. Every thread count gives the same answer. |
@@ -117,7 +117,7 @@ Requests can also come from a pipe: `echo "Play some Bowie" | seal run relay-1`.
 
 ## Settings
 
-| Variable | |
+| Variable | What it does |
 |---|---|
 | `SEAL_HOME` | Where models and programs are kept. The default is `~/.seal`. |
 | `SEAL_HF_URL` | Where to download weights from instead of `https://huggingface.co`. |

@@ -121,7 +121,7 @@ cache graphs and undersized shared arenas. Assertions remain enabled in optimize
 
 ## Speed (Relay 1, one request of 600 tokens, one thread, Ryzen 7800X3D)
 
-| | encoder |
+| Runtime | Encoder time |
 |---|---|
 | first runtime (2026-10-18) | 337 ms |
 | exact kernels (256/512-bit tiles, VNNI, vectorized softmax max) | 132 ms |
