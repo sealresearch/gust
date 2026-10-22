@@ -1,0 +1,119 @@
+[
+  {
+    "name": "set_alarm",
+    "description": "Set an alarm for a time.",
+    "params": [
+      {
+        "name": "time",
+        "type": "string",
+        "description": "When the alarm rings, as an ISO 8601 date and time.",
+        "required": true
+      },
+      {
+        "name": "label",
+        "type": "string",
+        "description": "A name for the alarm.",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "set_timer",
+    "description": "Start a countdown timer.",
+    "params": [
+      {
+        "name": "minutes",
+        "type": "integer",
+        "description": "How many minutes to count down.",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "send_message",
+    "description": "Send a text message to a contact.",
+    "params": [
+      {
+        "name": "recipient",
+        "type": "string",
+        "description": "Who to send the message to.",
+        "required": true
+      },
+      {
+        "name": "body",
+        "type": "string",
+        "description": "The text of the message.",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "get_weather",
+    "description": "Get the weather forecast for a place.",
+    "params": [
+      {
+        "name": "city",
+        "type": "string",
+        "description": "The city to look up.",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "show_map",
+    "description": "Show a location on the map.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "The place or address to show.",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "set_volume",
+    "description": "Change the volume.",
+    "params": [
+      {
+        "name": "level",
+        "type": "integer",
+        "description": "Volume in percent, 0 to 100.",
+        "required": true
+      },
+      {
+        "name": "stream",
+        "type": "string",
+        "description": "Which volume to change.",
+        "required": false,
+        "enum": [
+          "media",
+          "ring",
+          "alarm"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "play_music",
+    "description": "Play a song, an artist or a playlist.",
+    "params": [
+      {
+        "name": "query",
+        "type": "string",
+        "description": "What to play.",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "turn_on_flashlight",
+    "description": "Turn the flashlight on.",
+    "params": []
+  },
+  {
+    "name": "turn_off_flashlight",
+    "description": "Turn the flashlight off.",
+    "params": []
+  }
+]

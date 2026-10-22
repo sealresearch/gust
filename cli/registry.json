@@ -1,0 +1,62 @@
+{
+  "models": {
+    "relay-1": {
+      "name": "Relay 1",
+      "task": "Turns a request and a list of tools into exact function calls",
+      "parameters": "21.8M",
+      "licence": "CC BY 4.0",
+      "repo": "sealresearch/relay",
+      "revision": "main",
+      "runner": "relay",
+      "research": "https://seal.computer/research/relay-1",
+      "files": [
+        {
+          "name": "relay.gust",
+          "sha256": "e5d48435515c903fdf4ee15498ef5166fbbefa245f69d27ca5ce353547f11c94",
+          "size": 9856380
+        },
+        {
+          "name": "relay-route.gust",
+          "sha256": "cef649607d726bf5559840b56c2c13cf8280b77327831c2c3570f2e46fc08fa4",
+          "size": 79844
+        },
+        {
+          "name": "relay-anchor.gust",
+          "sha256": "fb69cbaac642d61c28650bc3f3ed1e7172268da6529f36817191d7af2c0ecf53",
+          "size": 53976
+        },
+        {
+          "name": "relay-args.gust",
+          "sha256": "8ff795abc606e4552cb5dd10da71079c02a69cd633a820ab6d242470c1cf776b",
+          "size": 1484472
+        },
+        {
+          "name": "relay-tokenizer.json",
+          "sha256": "a8af081fa797c442495a3ee22862640dfce4e2a94962dd8a37be0f3396abbe3a",
+          "size": 460207
+        },
+        {
+          "name": "relay-prefilter.bin",
+          "sha256": "c25ca7222c90584e1376985648e916286b973203069fe547404f29216b188c64",
+          "size": 2100554
+        }
+      ]
+    }
+  },
+  "aliases": {
+    "relay": "relay-1"
+  },
+  "runners": {
+    "relay": {
+      "repo": "sealresearch/gust",
+      "tag": "v0.1.0",
+      "assets": {
+        "windows-x86_64": "relay-windows-x64.exe",
+        "linux-x86_64": "relay-linux-x64",
+        "linux-aarch64": "relay-linux-arm64",
+        "macos-aarch64": "relay-macos-arm64",
+        "macos-x86_64": "relay-macos-x64"
+      }
+    }
+  }
+}
