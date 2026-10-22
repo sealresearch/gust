@@ -1,0 +1,59 @@
+name: python
+
+# Publishes the sealresearch Python package to PyPI, one wheel per platform, with Trusted Publishing: no token is stored
+# anywhere, PyPI trusts this workflow in this repository (set up once at https://pypi.org/manage/account/publishing/).
+#
+# Push a tag like python-v0.1.0 (it must match `version` in packages/python/pyproject.toml), or run the workflow by hand.
+# The wheels are built here, tested on Linux, and uploaded only if that works. No source distribution is published: a
+# platform without a wheel gets pip's "no matching distribution" and not a package that cannot load.
+
+on:
+  push:
+    tags: ["python-v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: The version in the tag matches the package
+        if: startsWith(github.ref, 'refs/tags/python-v')
+        run: |
+          want="${GITHUB_REF_NAME#python-v}"
+          have=$(sed -n 's/^version = "\(.*\)"/\1/p' packages/python/pyproject.toml | head -n 1)
+          test "$want" = "$have" || { echo "the tag says $want but pyproject.toml says $have"; exit 1; }
+      - name: Build the libraries and the wheels
+        run: |
+          python -m pip install setuptools wheel
+          ZIG=zig bash build.sh lib
+          python packages/python/scripts/build_wheels.py
+      - name: Check the wheels, and try the one for this machine
+        run: |
+          python -m pip install twine
+          python -m twine check packages/python/dist/*
+          python -m pip install packages/python/dist/*manylinux2014_x86_64.whl
+          cd "$RUNNER_TEMP" && python -c "import sealresearch as sr; print(sr.__version__, sr.models(), sr.runtime())"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels
+          path: packages/python/dist/*.whl
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
