@@ -126,7 +126,8 @@ jobs:
       - run: npm ci
       - run: npm run sync --workspaces
       - name: Fetch Relay from Hugging Face
-        run: node -e "import('./packages/js/src/index.mjs').then(async (m) => (await m.Model.load('relay-1', { cache: 'relay-cache' })).close())"
+        run: |
+          node -e "import('./packages/js/src/index.mjs').then(async (m) => (await m.Model.load('relay-1', { cache: 'relay-cache' })).close())"
       - name: The tests
         env:
           RELAY_MODEL_DIR: ${{ github.workspace }}/relay-cache/relay-1
