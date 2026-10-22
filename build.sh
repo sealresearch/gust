@@ -45,6 +45,17 @@ build() {
               runtime/tests/workshare.c -o out/workshare.wasm ;;
   linux-x64) x86 x86_64-linux-musl "-static -DGUST_THREADS_POSIX" out/relay-linux-x64 ;;
   arm64)    $ZIG cc $CFLAGS -target aarch64-linux-musl -static -DGUST_THREADS -DGUST_THREADS_POSIX $CLI -o out/relay-arm64 ;;
+  macos-arm64) $ZIG cc $CFLAGS -target aarch64-macos -DGUST_THREADS -DGUST_THREADS_POSIX $CLI -o out/relay-macos-arm64 ;;
+  macos-x64)   x86 x86_64-macos "-DGUST_THREADS_POSIX" out/relay-macos-x64 ;;
+  # The Relay command line for every platform, named as the seal command line downloads it, with checksums: out/release/
+  release)  mkdir -p out/release
+            for t in x64 linux-x64 arm64 macos-arm64 macos-x64; do build $t; done
+            cp out/relay-x64.exe out/release/relay-windows-x64.exe
+            cp out/relay-linux-x64 out/release/relay-linux-x64
+            cp out/relay-arm64 out/release/relay-linux-arm64
+            cp out/relay-macos-arm64 out/release/relay-macos-arm64
+            cp out/relay-macos-x64 out/release/relay-macos-x64
+            (cd out/release && sha256sum relay-* > SHA256SUMS) ;;
   # WebAssembly: relaxed SIMD (Chrome, Edge, Firefox) and plain SIMD128 (Safari), each single and threaded
   wasm)         $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 -mrelaxed-simd $WASM -o out/relay.wasm ;;
   wasm-mt)      $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 -mrelaxed-simd $MT $WASM -o out/relay-mt.wasm ;;
