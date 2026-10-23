@@ -51,7 +51,7 @@
   "engines": {
     "gust": {
       "repo": "sealresearch/gust",
-      "tag": "v0.2.1",
+      "tag": "v0.2.0",
       "assets": {
         "windows-x86_64": "gust-windows-x64.dll",
         "linux-x86_64": "gust-linux-x64.so",

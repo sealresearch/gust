@@ -24,9 +24,9 @@ model.run({
 model.close();
 ```
 
-Relay's `tools` are `{ name, description, params: [{ name, type, description, required, enum }] }`, or the JSON Schema tools of
-OpenAI, Anthropic or MCP as they are; [every field](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md) is
-described. The calls are synchronous and take as long as the model takes. In a browser, load and run the model in a
+Relay's `tools` are `{ name, description, params: [{ name, type, description, required, enum }] }`;
+[every field](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md) is described, with a converter for the JSON
+Schema tools of OpenAI, Anthropic and MCP. The calls are synchronous and take as long as the model takes. In a browser, load and run the model in a
 [Worker](https://developer.mozilla.org/docs/Web/API/Worker) so the page stays responsive.
 
 ## What goes in and out

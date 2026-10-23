@@ -61,10 +61,9 @@ request or the schema. It cannot write text that is not in the request, such as 
 }
 ```
 
-Tools written for OpenAI (`parameters`, bare or wrapped in `{ type: 'function', function }`), Anthropic (`input_schema`) or MCP
-(`inputSchema`) work as they are, and so can a list that mixes them: they are converted before Relay reads them, and give the
-same calls as the same tools in the format above. [TOOLS.md](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md)
-has every field and what is converted.
+Tools written for OpenAI (`parameters`), Anthropic (`input_schema`) or MCP (`inputSchema`) are JSON Schema, not this format: Relay
+reads one of them as a tool without parameters and makes no call. Convert them first; [TOOLS.md](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md)
+has every field and a short converter.
 
 `predict` returns `[{ tool, args }]`. `explain` also returns, for each argument, how Relay got it: the value program, the
 words of the request it came from and its confidence. Types are included.

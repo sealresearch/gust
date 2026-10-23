@@ -133,9 +133,9 @@ tool fits.
 A tool is `{name, description, params}`, and a parameter is `{name, type, description, required, enum}`, with `type` one of
 `string` (the default), `integer`, `number`, `boolean`, `array` or `object`, and `default`, `items` and `properties` for the
 rest. Pass `context.now`: without it, a request that needs a date ("tomorrow") gets no call. Tools written as JSON Schema,
-the way OpenAI (`parameters`), Anthropic (`input_schema`) and MCP (`inputSchema`) describe them, work as they are, and give
-the same calls as the same tools in Relay's format. Every field is in the
-[request reference](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md).
+the way OpenAI (`parameters`), Anthropic (`input_schema`) and MCP (`inputSchema`) describe them, are not this format: Relay
+reads them as tools without parameters and makes no call, so convert them first. Every field and a short converter in
+JavaScript and Python are in the [request reference](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md).
 
 ## Evaluation
 

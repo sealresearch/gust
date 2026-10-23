@@ -46,8 +46,8 @@ tools = [{"name": "show_map", "description": "Shows a location on the map.",
 relay.run({"text": "Show me the Eiffel Tower on the map", "tools": tools})   # [{'tool': 'show_map', 'args': {'query': 'Eiffel Tower'}}]
 ```
 
-`tools` is Relay's format, or the JSON Schema tools of OpenAI, Anthropic or MCP as they are; every field is in
-[models/relay/TOOLS.md](models/relay/TOOLS.md).
+`tools` are in Relay's format: a name, a description and `params`. Tools written for OpenAI, Anthropic or MCP (JSON Schema)
+need converting first, which a few lines do; every field and the conversion are in [models/relay/TOOLS.md](models/relay/TOOLS.md).
 
 The package is generic: every model is loaded and run the same way, whatever it takes in and gives back
 ([packages/python/README.md](packages/python/README.md)). It sits on the [model API](sdk/README.md), one small C interface that

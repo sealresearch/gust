@@ -64,32 +64,60 @@ Every value Relay returns comes from the request or from the schema (an enum val
 
 ## Tools written as JSON Schema
 
-Most apps already describe their tools the way OpenAI, Anthropic or MCP does. Relay accepts those as they are and
-converts them to the format above before it reads them, so these all give the same calls:
+Relay reads the format above, with the parameters in `params`. Most apps already describe their tools as JSON Schema, the
+way OpenAI (`parameters`, bare or inside `{ type: 'function', function: {...} }`), Anthropic (`input_schema`) and MCP
+(`inputSchema`) do. **Relay does not read those directly: a tool with `parameters` and no `params` is a tool without
+parameters, so the request gets no call.** Convert them first. `sealpup run --tools FILE` does it for you, and in code it
+is a few lines.
 
 ```js
-// Relay's own format
-{ name: 'get_weather', description: 'Weather for a city.',
-  params: [{ name: 'city', type: 'string', description: 'The city.', required: true }] }
+function relayTools(tools) {
+  const param = (name, s, required) => ({
+    name,
+    type: [].concat(s.type ?? []).find((t) => t !== 'null') ?? 'string',
+    description: s.description ?? '',
+    required,
+    ...(s.enum && { enum: s.enum }),
+    ...(s.items && { items: param('item', s.items, false) }),
+  });
+  return tools.map((t) => {
+    t = t.function ?? t;
+    const schema = t.parameters ?? t.input_schema ?? t.inputSchema ?? {};
+    return {
+      name: t.name,
+      description: t.description ?? '',
+      params: Object.entries(schema.properties ?? {}).map(([k, s]) => param(k, s, (schema.required ?? []).includes(k))),
+    };
+  });
+}
 
-// OpenAI, as the Chat Completions API takes it ...
-{ type: 'function', function: { name: 'get_weather', description: 'Weather for a city.',
-  parameters: { type: 'object', properties: { city: { type: 'string', description: 'The city.' } }, required: ['city'] } } }
-
-// ... or without the wrapper (the Responses API, and most function lists)
-{ name: 'get_weather', description: 'Weather for a city.', parameters: { type: 'object', properties: { ... }, required: [...] } }
-
-// Anthropic
-{ name: 'get_weather', description: 'Weather for a city.', input_schema: { type: 'object', properties: { ... }, required: [...] } }
-
-// MCP
-{ name: 'get_weather', description: 'Weather for a city.', inputSchema: { type: 'object', properties: { ... }, required: [...] } }
+relay.run({ text, tools: relayTools(openaiTools) });
 ```
 
-You can mix formats in one list. What the conversion reads from a schema property: `type`, `description`, `enum`,
-`default`, `items`, nested `properties` with their `required`, and `minimum` and `maximum` (added to the description
-as `(1-10)`, because Relay reads the description). A `type` that is a list, like `["string", "null"]`, becomes its
-first type that is not `"null"`. It does not follow `$ref`, and it does not read `anyOf`, `oneOf` or `allOf`: a property
-with only one of those is read as a string. For those, write the parameter in Relay's format.
+```python
+def relay_tools(tools):
+    def param(name, s, required):
+        t = s.get("type", "string")
+        if isinstance(t, list):                      # ["string", "null"]: the first type that is not null
+            t = next((x for x in t if x != "null"), "string")
+        p = {"name": name, "type": t, "description": s.get("description", ""), "required": required}
+        if "enum" in s:
+            p["enum"] = s["enum"]
+        if "items" in s:
+            p["items"] = param("item", s["items"], False)
+        return p
 
-A tool with neither `params` nor a schema is a tool without parameters.
+    out = []
+    for t in tools:
+        t = t.get("function", t)
+        schema = t.get("parameters") or t.get("input_schema") or t.get("inputSchema") or {}
+        out.append({"name": t["name"], "description": t.get("description", ""),
+                    "params": [param(k, s, k in schema.get("required", [])) for k, s in schema.get("properties", {}).items()]})
+    return out
+
+relay.run({"text": text, "tools": relay_tools(openai_tools)})
+```
+
+Both give the same calls as the same tools written in Relay's format, for OpenAI, Anthropic and MCP definitions. They do not
+follow `$ref` or read `anyOf`, `oneOf` or `allOf`: a property with only one of those is read as a string, so write that
+parameter in Relay's format. A tool with neither `params` nor a schema is a tool without parameters.

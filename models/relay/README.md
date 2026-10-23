@@ -25,7 +25,7 @@ out/relay-x64.exe relay-model --record-file request.json --prefilter
 
 A request is a JSON record: `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. `context.now`
 is the date and time Relay resolves "tomorrow" against. Every field is described in [TOOLS.md](TOOLS.md), which also shows
-how tools written for OpenAI, Anthropic or MCP (JSON Schema) are accepted as they are. From C, call `relay_open` and `relay_call` (see
+how to convert tools written for OpenAI, Anthropic or MCP (JSON Schema). From C, call `relay_open` and `relay_call` (see
 [host/README.md](host/README.md)); from JavaScript, `npm install @sealresearch/gust` (see [packages/js](../../packages/js/README.md)); to use the host's own WebAssembly exports instead, `web/relay-native.mjs` with the build from `./build.sh wasm`:
 
 ```js

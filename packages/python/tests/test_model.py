@@ -110,26 +110,6 @@ class ModelTests(unittest.TestCase):
             sr.set_threads(1)
         self.assertEqual(one, four)
 
-    def test_tools_written_as_json_schema(self):
-        """OpenAI, Anthropic and MCP tool definitions give the calls of the same tools in Relay's own format."""
-        schema = {"type": "object", "required": ["city"], "properties": {
-            "city": {"type": "string", "description": "The city."},
-            "unit": {"type": "string", "description": "The unit.", "enum": ["celsius", "fahrenheit"]}}}
-        own = [{"name": "get_weather", "description": "Weather for a city.", "params": [
-            {"name": "city", "type": "string", "description": "The city.", "required": True},
-            {"name": "unit", "type": "string", "description": "The unit.", "required": False, "enum": ["celsius", "fahrenheit"]}]}]
-        base = {"name": "get_weather", "description": "Weather for a city."}
-        formats = {"openai": [{**base, "parameters": schema}],
-                   "wrapped": [{"type": "function", "function": {**base, "parameters": schema}}],
-                   "anthropic": [{**base, "input_schema": schema}],
-                   "mcp": [{**base, "inputSchema": schema}]}
-        text = "What is the weather in Paris in fahrenheit"
-        with sr.Model.load("relay-1", directory=DIR) as model:
-            want = model.run({"text": text, "tools": own})
-            self.assertEqual(want, [{"tool": "get_weather", "args": {"city": "Paris", "unit": "fahrenheit"}}])
-            for name, tools in formats.items():
-                self.assertEqual(model.run({"text": text, "tools": tools}), want, name)
-
     def test_two_python_threads_at_once(self):
         results, errors = [], []
         with sr.Model.load("relay-1", directory=DIR) as model:

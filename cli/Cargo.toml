@@ -1,6 +1,6 @@
 [package]
 name = "sealpup"
-version = "0.2.1"
+version = "0.2.0"
 edition = "2021"
 description = "Install and run Seal's on-device models"
 license = "MIT"

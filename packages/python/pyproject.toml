@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sealresearch"
-version = "0.1.1"
+version = "0.1.0"
 description = "Seal Research's on-device models from Python: one interface for every model, on the Gust runtime."
 readme = "README.md"
 license = { text = "MIT" }
