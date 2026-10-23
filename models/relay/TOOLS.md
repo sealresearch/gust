@@ -4,7 +4,7 @@ A request is one JSON object: the message, the tools the app offers, and optiona
 
 ```json
 {
-  "text": "Set an alarm for 6:45 tomorrow and text Sam I'm running late",
+  "text": "Set an alarm for 6:45 tomorrow, then text Sam I'm running late",
   "tools": [
     { "name": "set_alarm", "description": "Sets an alarm.",
       "params": [

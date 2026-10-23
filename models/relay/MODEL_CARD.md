@@ -34,7 +34,7 @@ and no Python in the path.
   slots. That is also where its limits come from, and they are listed below.
 
 ```
-User   Set an alarm for 6:45 tomorrow and text Sam I'm running late
+User   Set an alarm for 6:45 tomorrow, then text Sam I'm running late
 Tools  set_alarm(time, label?), send_message(recipient, body), get_weather(city), ...
 
 Relay  set_alarm(time="2026-10-18T06:45:00")
