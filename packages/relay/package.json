@@ -1,6 +1,6 @@
 {
   "name": "@sealresearch/relay",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Relay 1, an 11.5 MB tool-calling model, in Node and in the browser. Built on the Gust model API (@sealresearch/gust).",
   "keywords": [
     "tool-calling",
@@ -49,6 +49,6 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@sealresearch/gust": "^0.1.0"
+    "@sealresearch/gust": "^0.1.1"
   }
 }

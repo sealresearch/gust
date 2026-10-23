@@ -25,7 +25,9 @@ relay.run({"text": "Tell me a joke", "tools": tools})
 # []   no tool fits, so no call
 ```
 
-[Relay 1](https://seal.computer/research/relay-1) is the first model. Every model is used the same way: what it takes in and gives
+Relay's `tools` are `{"name", "description", "params": [{"name", "type", "description", "required", "enum"}]}`, or the JSON Schema
+tools of OpenAI, Anthropic or MCP as they are; [every field](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md)
+is described. [Relay 1](https://seal.computer/research/relay-1) is the first model. Every model is used the same way: what it takes in and gives
 back is in `model.info`, so new models need no new code here.
 
 ## The interface

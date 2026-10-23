@@ -60,7 +60,7 @@ every distribution a Python wheel targets.
 ## Adding a model
 
 A model is a `gust_model_def`: an id, a JSON description, and the functions that open, run and close it. Streaming functions
-are optional. [`models/relay/sdk/relay_model.c`](../models/relay/sdk/relay_model.c) is the Relay plugin (about 120 lines around the
+are optional. [`models/relay/sdk/relay_model.c`](../models/relay/sdk/relay_model.c) is the Relay plugin (about 300 lines around the
 Relay host); [`tests/abi_test.c`](tests/abi_test.c) has two toy models that have nothing to do with Relay, one text to text and one
 streaming audio, which is how the tests show the API does not depend on any model.
 

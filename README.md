@@ -41,8 +41,13 @@ pip install sealresearch
 import sealresearch as sr
 
 relay = sr.Model.load("relay-1")        # downloads the files the first time, checks them, keeps them
+tools = [{"name": "show_map", "description": "Shows a location on the map.",
+          "params": [{"name": "query", "type": "string", "description": "The place to show.", "required": True}]}]
 relay.run({"text": "Show me the Eiffel Tower on the map", "tools": tools})   # [{'tool': 'show_map', 'args': {'query': 'Eiffel Tower'}}]
 ```
+
+`tools` is Relay's format, or the JSON Schema tools of OpenAI, Anthropic or MCP as they are; every field is in
+[models/relay/TOOLS.md](models/relay/TOOLS.md).
 
 The package is generic: every model is loaded and run the same way, whatever it takes in and gives back
 ([packages/python/README.md](packages/python/README.md)). It sits on the [model API](sdk/README.md), one small C interface that
@@ -58,7 +63,7 @@ npm install @sealresearch/gust
 import { Model } from '@sealresearch/gust';
 
 const relay = await Model.load('relay-1');   // downloads the files the first time, checks them, keeps them
-relay.run({ text: 'Show me the Eiffel Tower on the map', tools });   // [{ tool: 'show_map', args: { query: 'Eiffel Tower' } }]
+relay.run({ text: 'Show me the Eiffel Tower on the map', tools });   // the same tools as above, as JavaScript objects   // [{ tool: 'show_map', args: { query: 'Eiffel Tower' } }]
 ```
 
 Like the Python package it is generic: every model is loaded and run the same way ([packages/js/README.md](packages/js/README.md)).

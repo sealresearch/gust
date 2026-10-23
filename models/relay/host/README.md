@@ -20,7 +20,9 @@ relay_free(why);
 relay_close(r);
 ```
 
-A record is `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. A model directory holds
+A record is `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}` (every field is in
+[../TOOLS.md](../TOOLS.md)). The host reads tools in this format only; the model API plugin converts OpenAI, Anthropic and MCP
+tool definitions to it first. A model directory holds
 `relay.gust`, `relay-route.gust`, `relay-anchor.gust`, `relay-args.gust`, `relay-tokenizer.json` and optionally
 `relay-prefilter.bin`. All of them are in the Hugging Face repository `sealresearch/relay`.
 

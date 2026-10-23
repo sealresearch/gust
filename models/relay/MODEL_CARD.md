@@ -113,8 +113,29 @@ In Node or a browser, run `npm install @sealresearch/relay` and call `Relay.load
 ([package](https://github.com/sealresearch/gust/tree/main/packages/relay)). To build the WebAssembly runtime yourself, run `./build.sh wasm`
 and use `models/relay/web/relay-native.mjs`. The native and WebAssembly builds return the same calls, byte for byte, for any thread count.
 
-An app gives Relay a record: `{text, tools: [{name, description, params: [...]}], kind?, context?: {now}}`. Relay returns
-`[{tool, args}]`, or `[]` when no tool fits.
+### The request
+
+An app gives Relay a record: the message, the tools it offers, and the date. Relay returns `[{tool, args}]`, or `[]` when no
+tool fits.
+
+```json
+{
+  "text": "Set an alarm for 6:45 tomorrow",
+  "tools": [
+    {"name": "set_alarm", "description": "Sets an alarm.",
+     "params": [{"name": "time", "type": "string", "description": "When it rings, as an ISO 8601 time.", "required": true}]},
+    {"name": "turn_on_flashlight", "description": "Turns the flashlight on.", "params": []}
+  ],
+  "context": {"now": "2026-10-23T09:00:00"}
+}
+```
+
+A tool is `{name, description, params}`, and a parameter is `{name, type, description, required, enum}`, with `type` one of
+`string` (the default), `integer`, `number`, `boolean`, `array` or `object`, and `default`, `items` and `properties` for the
+rest. Pass `context.now`: without it, a request that needs a date ("tomorrow") gets no call. Tools written as JSON Schema,
+the way OpenAI (`parameters`), Anthropic (`input_schema`) and MCP (`inputSchema`) describe them, work as they are, and give
+the same calls as the same tools in Relay's format. Every field is in the
+[request reference](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md).
 
 ## Evaluation
 

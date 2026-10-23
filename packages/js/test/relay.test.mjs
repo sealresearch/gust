@@ -109,3 +109,31 @@ test('options reach the model', { skip }, async () => {
   const model = await Model.load('relay-1', { directory: DIR, options: { prefilter: false, k: 3 } });
   try { assert.deepEqual(model.run(request), expected); } finally { model.close(); }
 });
+
+// The same two tools in every format an app is likely to have: Relay's own, OpenAI's (bare and wrapped), Anthropic's and MCP's.
+test('takes tools written as JSON Schema', { skip }, async () => {
+  const defs = [
+    ['set_alarm', 'Sets an alarm.', { type: 'object', properties: { time: { type: 'string', description: 'ISO time' }, label: { type: 'string', description: 'Label' } }, required: ['time'] }],
+    ['get_weather', 'Weather for a city.', { type: 'object', properties: { city: { type: 'string', description: '' }, unit: { type: 'string', description: '', enum: ['celsius', 'fahrenheit'] } }, required: ['city'] }],
+  ];
+  const own = [
+    { name: 'set_alarm', description: 'Sets an alarm.', params: [{ name: 'time', type: 'string', description: 'ISO time', required: true }, { name: 'label', type: 'string', description: 'Label', required: false }] },
+    { name: 'get_weather', description: 'Weather for a city.', params: [{ name: 'city', type: 'string', description: '', required: true }, { name: 'unit', type: 'string', description: '', required: false, enum: ['celsius', 'fahrenheit'] }] },
+  ];
+  const formats = {
+    openai: defs.map(([name, description, parameters]) => ({ name, description, parameters })),
+    'openai, wrapped': defs.map(([name, description, parameters]) => ({ type: 'function', function: { name, description, parameters } })),
+    anthropic: defs.map(([name, description, input_schema]) => ({ name, description, input_schema })),
+    mcp: defs.map(([name, description, inputSchema]) => ({ name, description, inputSchema })),
+    'mixed with Relay format': [{ name: 'set_alarm', description: 'Sets an alarm.', parameters: defs[0][2] }, own[1]],
+  };
+  const model = await Model.load('relay-1', { directory: DIR, optional: false });
+  try {
+    for (const text of ['Set an alarm for 6:45 tomorrow called gym', 'What is the weather in Paris in fahrenheit', 'Tell me a joke']) {
+      const context = { now: '2026-10-23T09:00:00' };
+      const want = model.run({ text, tools: own, context }, { raw: true });
+      for (const [name, tools] of Object.entries(formats)) assert.equal(model.run({ text, tools, context }, { raw: true }), want, `${name}: ${text}`);
+    }
+    assert.deepEqual(model.run({ text: 'Weather in Paris in fahrenheit', tools: formats.openai }), [{ tool: 'get_weather', args: { city: 'Paris', unit: 'fahrenheit' } }]);
+  } finally { model.close(); }
+});

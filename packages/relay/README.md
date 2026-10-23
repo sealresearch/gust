@@ -45,11 +45,26 @@ request or the schema. It cannot write text that is not in the request, such as 
   tools: [{                           // what the app offers
     name: string,
     description?: string,
-    params: [{ name, type?, description?, required?, enum? }],
+    params?: [{                       // leave it out for a tool without parameters
+      name: string,
+      type?: 'string' | 'integer' | 'number' | 'boolean' | 'array' | 'object',   // default 'string'
+      description?: string,
+      required?: boolean,
+      enum?: any[],
+      default?: any,
+      items?: param,                  // the element of an array
+      properties?: param[],           // the fields of an object
+    }],
   }],
-  context?: { now?: string },         // "2026-10-18T09:00:00": what "tomorrow" means
+  context?: { now?: string },         // "2026-10-18T09:00:00": what "tomorrow" means. Pass it; without it a date request gets no call
+  kind?: 'call' | 'extract',          // 'extract' always calls the best tool: for filling in a form
 }
 ```
+
+Tools written for OpenAI (`parameters`, bare or wrapped in `{ type: 'function', function }`), Anthropic (`input_schema`) or MCP
+(`inputSchema`) work as they are, and so can a list that mixes them: they are converted before Relay reads them, and give the
+same calls as the same tools in the format above. [TOOLS.md](https://github.com/sealresearch/gust/blob/main/models/relay/TOOLS.md)
+has every field and what is converted.
 
 `predict` returns `[{ tool, args }]`. `explain` also returns, for each argument, how Relay got it: the value program, the
 words of the request it came from and its confidence. Types are included.
