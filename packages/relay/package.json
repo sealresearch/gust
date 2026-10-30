@@ -49,6 +49,6 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@sealresearch/gust": "^0.1.0"
+    "@sealresearch/gust": "^0.1.0 || ^0.2.0"
   }
 }
