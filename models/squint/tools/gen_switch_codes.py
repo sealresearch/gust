@@ -1,7 +1,7 @@
 """Writes switch_codes.json: a few QR module grids made with Segno for the payload-switch sequences.
 
 Pairs share version, error correction level and mask, so the two grids differ in few modules (one changed character).
-Run: C:/Python314/python.exe gen_switch_codes.py   (needs `pip install segno`)
+Run: python gen_switch_codes.py   (needs `pip install segno`)
 """
 import json
 import segno

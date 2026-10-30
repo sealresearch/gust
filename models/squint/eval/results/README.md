@@ -1,5 +1,8 @@
 # Squint results
 
+Measured on the JavaScript and WebAssembly release of Squint, before it moved onto Gust (see ../../MODEL_CARD.md, "The port").
+"This package" below means that release.
+
 All on a Ryzen 7 7800X3D (Windows 11, no GPU). The webcam recordings are five clips of one code on a phone screen, from one webcam
 (3,918 frames at 1280 x 720); all five were used while developing Squint, so these are development results, not
 held-out ones. The expected payload is read by the scorer only after each scan returns; it never reaches the scanner.

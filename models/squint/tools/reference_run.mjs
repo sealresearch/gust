@@ -20,7 +20,8 @@ const arg = (n, f) => {
   return i < 0 ? f : process.argv[i + 1];
 };
 const has = n => process.argv.includes(n);
-const REF = (process.env.SQUINT_REF ?? 'C:/Users/rickh/Documents/sandbox/squint-release/models/squint').replace(/\\/g, '/');
+const REF = (process.env.SQUINT_REF ?? '').split(String.fromCharCode(92)).join('/');
+if (!REF) throw new Error('set SQUINT_REF to the JavaScript release of Squint (js/dist and package/): see tools/README.md');
 const DIR = (arg('--dir', null) ?? fileURLToPath(new URL('../../../out/squint-seq/', import.meta.url))).replace(/\\/g, '/').replace(/\/?$/, '/');
 const only = arg('--only', null)?.split(',');
 const suffix = arg('--suffix', has('--scalar') ? '.ref-scalar' : has('--nowarm') ? '.ref-nowarm' : '.ref');

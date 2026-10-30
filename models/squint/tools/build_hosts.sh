@@ -22,7 +22,7 @@ inst quads "" white_quads.c
 inst flow "" flow.c
 V="geometry.c white_quads.c registration.c phase.c qr.c evidence.c acquire.c verify_host.c"
 inst verifier "-DSQUINT_FRAME_CAPACITY=921600" $V
-inst acquirer "-DSQUINT_FRAME_CAPACITY=921600" $V
+inst acquirer "-DSQUINT_FRAME_CAPACITY=921600" geometry.c qr.c acquire.c
 $ZIG cc $FLAGS -c "$here/host/squint_clock.c" -o "$out/clock.o"
 $ZIG cc $FLAGS -c "$here/host/squint.c" -o "$out/squint.o"
 echo "$out"

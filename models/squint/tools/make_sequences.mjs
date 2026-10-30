@@ -18,7 +18,6 @@ const arg = (n, f) => {
   const i = process.argv.indexOf(n);
   return i < 0 ? f : process.argv[i + 1];
 };
-const REF = (process.env.SQUINT_REF ?? 'C:/Users/rickh/Documents/sandbox/squint-release/models/squint').replace(/\\/g, '/');
 const OUT = fileURLToPath(arg('--out', null) ? new URL('file:///' + arg('--out').replace(/\\/g, '/') + '/') : new URL('../../../out/squint-seq/', import.meta.url));
 const only = arg('--only', null)?.split(',');
 

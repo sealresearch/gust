@@ -16,7 +16,7 @@ SQUINT_API_QR(sq_qr_)
 SQUINT_API_QUADS(sq_quads_)
 SQUINT_API_FLOW(sq_flow_)
 SQUINT_API_VERIFIER(sq_verifier_)
-SQUINT_API_VERIFIER(sq_acquirer_)
+SQUINT_API_ACQUIRER(sq_acquirer_)
 double sq_clock_seconds(void);
 
 #define GEO(n) sq_geometry_##n /* the standalone geometry module: soft sampling for the tracker and the partial reader */
@@ -24,7 +24,7 @@ double sq_clock_seconds(void);
 #define QUA(n) sq_quads_##n    /* white-patch detection */
 #define FLO(n) sq_flow_##n     /* sparse optical flow */
 #define VER(n) sq_verifier_##n /* the tracker's verifier host: registration, fresh decode, evidence certificate, acquisition */
-#define ACQ(n) sq_acquirer_##n /* the acquirer's own copy of the verifier host */
+#define ACQ(n) sq_acquirer_##n /* the acquirer: the full-frame reader on its own */
 
 #define MAXPIX (SQ_MAX_WIDTH * SQ_MAX_HEIGHT)
 #define MAXTRACK 196 /* the host's template side for versions 1 to 6: (41 + 8) * 4 */
@@ -1024,6 +1024,6 @@ failed:
 }
 
 size_t sq_memory_bytes(void) {
-    /* The static memory of the hosts and the pipeline: the .data section of the x86-64 build, measured (45 MiB). */
-    return (size_t)45 * 1024 * 1024;
+    /* The static memory of the hosts and the pipeline: the .data section of the x86-64 build, measured (33 MiB). */
+    return (size_t)33 * 1024 * 1024;
 }

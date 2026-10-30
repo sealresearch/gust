@@ -31,7 +31,9 @@ int main(int argc, char **argv) {
     snprintf(path, sizeof path, "%s.c.jsonl", argv[1]);
     FILE *out = fopen(path, "wb");
     if (!out) return 2;
+    double open0 = sq_clock_seconds();
     if (sq_open(err, sizeof err)) { fprintf(stderr, "%s\n", err); return 1; }
+    double open_ms = (sq_clock_seconds() - open0) * 1000;
     uint8_t *gray = malloc((size_t)w * h);
     sq_read_options o;
     sq_default_options(&o);
@@ -70,6 +72,14 @@ int main(int argc, char **argv) {
         } else fprintf(out, "\"version\":null,\"payload\":null,\"corners\":null}\n");
     }
     fclose(out);
-    if (getenv("SQ_TIMING")) fprintf(stderr, "%s: %d frames, %.2f ms per frame on average, %.2f ms at most\n", argv[1], n, total / n, worst);
+    if (getenv("SQ_TIMING")) {
+        fprintf(stderr, "%s: open %.0f ms, %d frames, %.2f ms per frame on average, %.2f ms at most\n", argv[1], open_ms, n,
+                total / n, worst);
+        FILE *st = fopen("/proc/self/status", "r"); /* Linux and Android: the peak memory of this process */
+        char line[200];
+        while (st && fgets(line, sizeof line, st))
+            if (!strncmp(line, "VmHWM", 5)) fprintf(stderr, "%s: %s", argv[1], line);
+        if (st) fclose(st);
+    }
     return 0;
 }

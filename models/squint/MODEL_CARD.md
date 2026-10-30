@@ -59,7 +59,7 @@ straight shake, entering and leaving the frame, distant and close codes, version
 payloads that change mid-motion, vanishing codes, junk frames, damage, glare and lighting gradients, frame sizes from 64 x 64
 to 1920 x 1080, clock restarts and resets). The JavaScript release read 1,721 of them; the C port returns the same read for
 every frame, down to the last bit of every corner coordinate, through the C driver, through the Gust model API (`run` and
-streams) and in WebAssembly through the JavaScript package. The golden outputs are in [tests/golden](tests/golden); the
+streams), through the shared library and the Python package, and in WebAssembly through the JavaScript package. The golden outputs are in [tests/golden](tests/golden); the
 generator is deterministic. The port reproduces a warm-up the JavaScript ran when it loaded, which leaves state in the hosts that
 later reads depend on.
 
@@ -76,7 +76,7 @@ average on the desktop above with no budgets (up to 29 ms for the slowest frame 
 - One code per frame. ECI and kanji modes, empty payloads, Micro QR and versions above 10 are not supported (a code using ECI
   or kanji is not read at all); tracking covers versions 1-6. Frames up to 1280 x 720.
 - After a code changes, only about a fifth of the frames are read until the new code decodes afresh. That is deliberate.
-- One reader per process, 45 MB of fixed memory.
+- One reader per process, 33 MB of fixed memory.
 - Decoded payloads are untrusted input.
 
 ## Data and licence

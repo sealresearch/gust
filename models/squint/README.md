@@ -12,7 +12,7 @@ It is a **research model**: measured on one webcam, with the limits listed in [M
 | Weights | none: every part is a hand-built algorithm in C |
 | Size | about 0.5 MB of compiled code per target |
 | Runs on | x86-64, ARM64 and WebAssembly, on the Gust runtime, with no GPU and no server |
-| Memory | 45 MB of fixed memory (measured), none allocated while reading |
+| Memory | 33 MB of fixed memory (measured), none allocated while reading |
 | Licence | MIT |
 | Write-up | [seal.computer/research/squint-1](https://seal.computer/research/squint-1) |
 
