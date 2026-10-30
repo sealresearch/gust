@@ -1,13 +1,14 @@
 // One operator thread (gust-models-mt.wasm). It instantiates the module over the shared memory (the main thread already ran
 // _initialize), moves its stack pointer to a region of its own, says it is ready and parks in gust_worker(id), running the
 // tasks the executor hands out. It never returns; the main thread terminates it.
+import { clockTimeGet } from './clock.mjs';
 const stubs = {
   fd_write: () => 0, fd_close: () => 0, fd_seek: () => 70,
   proc_exit(code) { throw new Error(`the Gust module exited in a worker (${code})`); },
 };
 
 async function start({ module, memory, sp, id }, post) {
-  const instance = await WebAssembly.instantiate(module, { env: { memory }, wasi_snapshot_preview1: stubs });
+  const instance = await WebAssembly.instantiate(module, { env: { memory }, wasi_snapshot_preview1: { ...stubs, clock_time_get: (id, _p, out) => clockTimeGet(memory, id, out) } });
   instance.exports.__stack_pointer.value = sp;
   post('ready');
   instance.exports.gust_worker(id);

@@ -6,6 +6,7 @@ tests and demo.
 | Model | Folder | What it does | Weights | Licence of the weights |
 |---|---|---|---|---|
 | Relay 1 | [`relay/`](relay/README.md) | Turns a request and a list of tools into exact function calls | [sealresearch/relay](https://huggingface.co/sealresearch/relay) | CC BY 4.0 |
+| Squint 1 (research) | [`squint/`](squint/README.md) | Reads QR codes from shaky, blurred camera frames | none: hand-built C, no weights | MIT (code) |
 
 ## What a model folder holds
 

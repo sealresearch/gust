@@ -16,6 +16,14 @@ MODELS_WASM="-Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY runtime/src/gu
   -DRELAY_NO_FILES -mexec-model=reactor -fvisibility=hidden -Wl,--strip-debug -Wl,-z,stack-size=1048576"
 for f in malloc free gust_model_abi_version gust_model_last_error gust_model_ids gust_model_describe gust_model_runtime gust_model_set_threads          gust_model_open gust_model_info gust_model_memory gust_model_run gust_model_close gust_stream_open gust_stream_push gust_stream_pull          gust_stream_finish gust_stream_close gust_result_count gust_result_get gust_result_free; do MODELS_WASM="$MODELS_WASM -Wl,--export=$f"; done
 [ -n "${GUST_TOY:-}" ] && MODELS_WASM="$MODELS_WASM -DGUST_MODEL_TOY sdk/tests/toy_models.c"
+# Squint (models/squint) has no weights: its C hosts are compiled per target into objects, each instance with its own symbol
+# prefix (models/squint/tools/build_hosts.sh), and linked into the model library next to Relay. NO_SQUINT=1 leaves it out.
+SQUINT_FLAGS="-DGUST_MODEL_SQUINT -Imodels/squint/host"
+SQUINT_SRC="models/squint/sdk/squint_model.c"
+squint_objs() { # target, directory for the objects, extra compiler flags: prints the object files
+  ZIG=$ZIG SQUINT_CFLAGS="${3:-}" bash models/squint/tools/build_hosts.sh "$1" "$2" > /dev/null
+  ls "$2"/*.o
+}
 MT="-matomics -mbulk-memory -DGUST_THREADS -Wl,--import-memory -Wl,--export-memory -Wl,--shared-memory
   -Wl,--max-memory=1073741824 -Wl,--export=__stack_pointer"
 # The runtime alone for JavaScript hosts (models/*/js): no libc, fixed 128 MiB memory, the public entry points.
@@ -42,13 +50,17 @@ sharedlib() { # platform, zig target, file name, thread define, "x86" for the th
   if [ -n "${GUST_TOY:-}" ]; then srcs="$srcs sdk/tests/toy_models.c"; toy="-DGUST_MODEL_TOY"; fi  # test models for bindings: GUST_TOY=1
   local flags="$CFLAGS -target $tgt -fPIC -DGUST_THREADS -D$thr -Isdk/include -Imodels/relay/host -DGUST_MODEL_RELAY $toy -fvisibility=hidden"
   mkdir -p $out $obj
+  local sq=""
+  if [ -z "${NO_SQUINT:-}" ]; then
+    flags="$flags $SQUINT_FLAGS"; srcs="$srcs $SQUINT_SRC"; sq=$(squint_objs $tgt $obj/squint)
+  fi
   if [ "$arch" = x86 ]; then
     $ZIG cc $flags -DGUST_VARIANT=base -c runtime/src/gust.c -o $obj/base.o
     $ZIG cc $flags -DGUST_VARIANT=avx2 -mavx2 -c runtime/src/gust.c -o $obj/avx2.o
     $ZIG cc $flags -DGUST_VARIANT=vnni -mavx2 -mavx512f -mavx512vl -mavx512bw -mavx512vnni -mevex512 -c runtime/src/gust.c -o $obj/vnni.o
-    $ZIG cc $flags -shared $obj/base.o $obj/avx2.o $obj/vnni.o runtime/src/dispatch_x86.c $srcs -o $out/$file
+    $ZIG cc $flags -shared $obj/base.o $obj/avx2.o $obj/vnni.o runtime/src/dispatch_x86.c $srcs $sq -o $out/$file
   else
-    $ZIG cc $flags -shared runtime/src/gust.c $srcs -o $out/$file
+    $ZIG cc $flags -shared runtime/src/gust.c $srcs $sq -o $out/$file
   fi
 }
 build() {
@@ -102,8 +114,8 @@ build() {
   wasm-mt)      $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 -mrelaxed-simd $MT $WASM -o out/relay-mt.wasm ;;
   wasm-simd)    $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $WASM -o out/relay-simd.wasm ;;
   wasm-mt-simd) $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MT $WASM -o out/relay-mt-simd.wasm ;;
-  wasm-models)    $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MODELS_WASM -o "${WASM_OUT:-out}/gust-models.wasm" ;;
-  wasm-models-mt) $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MT $MODELS_WASM -o "${WASM_OUT:-out}/gust-models-mt.wasm" ;;
+  wasm-models)    $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MODELS_WASM $SQUINT_FLAGS $SQUINT_SRC                     $(squint_objs wasm32-wasi out/obj-squint-wasm -msimd128) -o "${WASM_OUT:-out}/gust-models.wasm" ;;
+  wasm-models-mt) $ZIG cc $CFLAGS -target wasm32-wasi -msimd128 $MT $MODELS_WASM $SQUINT_FLAGS $SQUINT_SRC                     $(squint_objs wasm32-wasi out/obj-squint-wasm-mt "-msimd128 -matomics -mbulk-memory") -o "${WASM_OUT:-out}/gust-models-mt.wasm" ;;
   runtime-wasm)      $ZIG cc $CFLAGS -target wasm32-freestanding -msimd128 -mrelaxed-simd $RUNTIME_WASM -o out/gust.wasm ;;
   runtime-wasm-simd) $ZIG cc $CFLAGS -target wasm32-freestanding -msimd128 $RUNTIME_WASM -o out/gust-simd.wasm ;;
   test-t5)  $ZIG cc $CFLAGS -target x86_64-windows-gnu runtime/tests/t5.c -o out/t5.exe ;;

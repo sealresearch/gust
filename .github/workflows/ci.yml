@@ -39,6 +39,35 @@ jobs:
           ZIG=zig bash build.sh lib
           python3 packages/python/scripts/build_wheels.py
 
+  squint:
+    # Squint, the QR reader, is C hosts plus a pipeline in C. The regression regenerates 2,154 frames and checks that the reader
+    # returns, for every one, what the JavaScript release returned (tests/golden), bit for bit; then the same through the
+    # model API and in WebAssembly.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Squint against the golden reads
+        run: ZIG=zig bash models/squint/tests/run.sh
+      - name: Squint in WebAssembly through the JavaScript package
+        run: |
+          mkdir -p out/squint-wasm
+          ZIG=zig WASM_OUT=out/squint-wasm bash build.sh wasm-models
+          for ref in out/squint-seq/*.ref.jsonl; do node models/squint/tools/wasm_run.mjs "${ref%.ref.jsonl}"; done
+          node models/squint/tools/compare_api.mjs out/squint-seq wasm
+
   sdk:
     # The model API and the Python package, on the three systems they run on: the library is built here, then the toy
     # models and Relay (downloaded from Hugging Face) go through the C and Python interfaces.

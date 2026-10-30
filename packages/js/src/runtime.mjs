@@ -3,6 +3,8 @@
 //
 // Two builds of the same C code: gust-models.wasm (one thread) and gust-models-mt.wasm (shared memory, workers). Their answers
 // are bit for bit the same, and the same as the native libraries.
+import { clockTimeGet } from './clock.mjs';
+
 export const isNode = typeof process !== 'undefined' && !!process.versions?.node;
 
 export const STATUS = ['ok', 'argument', 'unknown_model', 'files', 'open', 'input', 'run', 'unsupported', 'memory', 'state'];
@@ -60,6 +62,7 @@ function wasi(getMemory) {
     },
     fd_close: () => 0,
     fd_seek: () => 70, // ESPIPE
+    clock_time_get(id, _precision, out) { return clockTimeGet(getMemory(), id, out); }, // deadlines of models that have them
     proc_exit(code) { throw new Error(`the Gust module exited (${code})`); },
   };
 }
