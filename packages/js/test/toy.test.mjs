@@ -11,7 +11,7 @@ const skip = existsSync(`${toy}gust-models.wasm`) ? false : 'build the toy modul
 if (!skip) configure({ wasm: { st: `${toy}gust-models.wasm`, mt: `${toy}gust-models-mt.wasm` } });
 
 test('lists and describes models', { skip }, async () => {
-  assert.deepEqual(await models(), ['relay-1', 'toy-upper', 'toy-gain']);
+  assert.deepEqual(await models(), ['relay-1', 'squint-1', 'toy-upper', 'toy-gain']);
   assert.match(await runtime(), /wasm32/);
   assert.equal((await describe('toy-upper')).kind, 'text');
   assert.equal((await describe('relay')).id, 'relay-1', 'aliases work');

@@ -1,0 +1,46 @@
+{
+ "squint": {
+  "frames": 300,
+  "read": 105,
+  "cpuMsPerFrame": 2.97,
+  "wallMsPerFrame": 2.95,
+  "coresUsed": 1.01,
+  "readerLoadMiB": 0.0,
+  "peakWorkingSetMiB": 303.0,
+  "peakAboveFramesMiB": 5.9,
+  "privateMiB": 774.9
+ },
+ "zxing-cpp": {
+  "frames": 300,
+  "read": 50,
+  "cpuMsPerFrame": 2.34,
+  "wallMsPerFrame": 2.32,
+  "coresUsed": 1.01,
+  "readerLoadMiB": 0.5,
+  "peakWorkingSetMiB": 299.2,
+  "peakAboveFramesMiB": 2.2,
+  "privateMiB": 769.8
+ },
+ "zbar": {
+  "frames": 300,
+  "read": 42,
+  "cpuMsPerFrame": 11.61,
+  "wallMsPerFrame": 11.63,
+  "coresUsed": 1.0,
+  "readerLoadMiB": 5.1,
+  "peakWorkingSetMiB": 304.1,
+  "peakAboveFramesMiB": 7.0,
+  "privateMiB": 772.6
+ },
+ "wechat": {
+  "frames": 300,
+  "read": 108,
+  "cpuMsPerFrame": 14.38,
+  "wallMsPerFrame": 14.45,
+  "coresUsed": 0.99,
+  "readerLoadMiB": 9.8,
+  "peakWorkingSetMiB": 380.0,
+  "peakAboveFramesMiB": 82.9,
+  "privateMiB": 925.2
+ }
+}

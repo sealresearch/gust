@@ -1,0 +1,40 @@
+{"i":0,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":1,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":2,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":3,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":4,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":5,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":6,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":7,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":8,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":9,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":10,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":11,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":12,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":13,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":14,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":15,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":16,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":17,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":18,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":19,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":20,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":21,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":22,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":23,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":24,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":25,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":26,"accepted":true,"reason":null,"path":"Squint acquisition","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070dffbe030de6b","4067dc750d05c26e","4078e9705270c2d8","40680de0d9df4c9c","4078b4d7932bcdab","4073f9d4301766c4","4070d61ade9d2b45","4074028bae2910ff"]}
+{"i":27,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070e0de84a66236","4067c1c1726abcec","4078ea07e93cd643","4067f49b327443ce","4078b42dc24c955b","4073ece65030a3de","4070d5b55214faec","4073f4e97de9ac23"]}
+{"i":28,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070f32e6c61da35","4067d0a1274ee3ee","4078fcd09608266a","406800cbadd94c3c","4078c95218a87818","4073f377888ea812","4070ea6d34ef83c4","4073fccd0119800b"]}
+{"i":29,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["407105b4f255a459","4067db9ac4226b88","40791003aca3f834","40680c663be7e6d4","4078dbf6eb472a12","4073f9ef228396a8","4070fc66d17725fc","407402f897bb67fc"]}
+{"i":30,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["407114bce5ce7917","4067e744a41e4147","40791e85b8f5801f","406814be680d19e6","4078ed649c358e3c","4073fd98ab0d9f46","40710e63aa88cc9c","4074083fdea5a7ea"]}
+{"i":31,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["40711ecac7bf8626","4067eab34b630b98","4079286972b5e020","4068188865c352d8","4078f6f83862dd56","4073ff53c388aa23","4071181f3ebad13d","407409cd9608386f"]}
+{"i":32,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["407120c8bfc128fb","4067e5dabe82e545","407929325230986e","406812380e256488","4078f90cdbde2310","4073fafab4a5f07b","40711b67cc79a491","4074062783d9f45d"]}
+{"i":33,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["40711968d78d9a0c","4067d48b9f473331","4079213b3a215cff","4067ffe3bf99dd6a","4078f1fc113f5db8","4073f13b988de8d5","407114eeb77784c3","4073fce5d2ddc7d9"]}
+{"i":34,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["40710dd00d38d28f","4067bc0da7e8aa7d","4079149abb40ac7a","4067e64d9e27710a","4078e6530f9fc8d0","4073e36c537face7","40710a4bd553a106","4073ef9b7658a884"]}
+{"i":35,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070fded92b76e3f","40679ada0ff6caeb","407904cea014e77d","4067c2dcdf96cc8a","4078d87ec331dd05","4073d1cb5b2c489c","4070fc69c85b98af","4073df1360ada93d"]}
+{"i":36,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070eeeac562f921","406772e2f7139546","4078f5f76d8f84d6","40679a5c72d22336","4078ca201ba8bd6b","4073bdb693e828de","4070ede26561eefa","4073cb4282ebe052"]}
+{"i":37,"accepted":true,"reason":null,"path":"WASM registered fresh QR decode","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070e20126673151","406745571076291b","4078e8af86c80f03","40676e0bbb02962b","4078bbc385594c99","4073a73044488d5a","4070dfdd9e6e7fe4","4073b4206d48bf50"]}
+{"i":38,"accepted":true,"reason":null,"path":"WASM registered fresh QR decode","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070d5fa8fdae1c8","40671a7ea9351ae7","4078dd59d63c8dde","4067416231ef4b0b","4078b205fbb25e88","4073918b80289b3a","4070d579874a4867","40739f6225e38510"]}
+{"i":39,"accepted":true,"reason":null,"path":"WASM registered fresh QR decode","version":3,"payload":"68747470733a2f2f6578616d706c652e636f6d2f737175696e742d74657374","corners":["4070e45d21b7b519","40672787dda85167","4078fdfffe7ee9b1","406750e0bc1da1a9","4078e939bd9b8e38","4073b0bfd2ffa488","4070dc2599ee55c8","4073b6349dcb7f05"]}

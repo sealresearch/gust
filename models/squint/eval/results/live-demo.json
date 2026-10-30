@@ -1,0 +1,19 @@
+{
+ "date": "2026-10-21",
+ "what": "The browser demo (demo/, two workers) in headless Chromium 1243 on a Ryzen 7 7800X3D, fake camera fed with a 30 fps gray Y4M of the motion recording, 20 s per run. A frame is read when the tracker or the acquisition worker accepted it; ms is the slower of the two workers. Run-to-run variation is large because which frames each worker sees depends on timing.",
+ "thisPackage": [
+  {"frames": 594, "read": 364, "wrong": 0, "p50Ms": 9.6, "p95Ms": 13.6, "maxMs": 52.5, "over15": 3},
+  {"frames": 595, "read": 423, "wrong": 0, "p50Ms": 9.6, "p95Ms": 12.9, "maxMs": 16.0, "over15": 2},
+  {"frames": 597, "read": 341, "wrong": 0, "p50Ms": 9.9, "p95Ms": 13.2, "maxMs": 14.8, "over15": 0},
+  {"frames": 597, "read": 406, "wrong": 0, "p50Ms": 9.7, "p95Ms": 13.2, "maxMs": 15.2, "over15": 1},
+  {"frames": 597, "read": 440, "wrong": 0, "p50Ms": 9.0, "p95Ms": 12.6, "maxMs": 16.1, "over15": 2},
+  {"frames": 596, "read": 410, "wrong": 0, "p50Ms": 9.3, "p95Ms": 12.9, "maxMs": 14.5, "over15": 0}
+ ],
+ "previousDemo": [
+  {"frames": 591, "read": 406, "wrong": 0, "p50Ms": 9.3, "p95Ms": 12.6, "maxMs": 14.9, "over15": 0},
+  {"frames": 595, "read": 405, "wrong": 0, "p50Ms": 9.4, "p95Ms": 12.5, "maxMs": 14.5, "over15": 0},
+  {"frames": 590, "read": 428, "wrong": 0, "p50Ms": 9.3, "p95Ms": 12.6, "maxMs": 15.0, "over15": 1}
+ ],
+ "originalRecording": {"frames": 597, "read": 436, "wrong": 0, "p50Ms": 9.6, "p95Ms": 12.8, "maxMs": 24.1, "over15": 3},
+ "generatedCodes": "hello (v1), digits (v5), website (v3), each sharp, disc 1.5 px, Gaussian 1.5 px and motion 2 px: 12 of 12 read, all matching"
+}
