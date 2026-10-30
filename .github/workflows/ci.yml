@@ -78,9 +78,10 @@ jobs:
           node models/squint/tools/compare_api.mjs out/squint-seq py
       - name: Squint in WebAssembly through the JavaScript package
         run: |
-          mkdir -p out/squint-wasm
-          ZIG=zig WASM_OUT=out/squint-wasm bash build.sh wasm-models
-          for ref in out/squint-seq/*.ref.jsonl; do node models/squint/tools/wasm_run.mjs "${ref%.ref.jsonl}"; done
+          ZIG=zig bash build.sh wasm-models wasm-models-mt
+          node packages/js/scripts/sync.mjs
+          root=$(pwd -W 2>/dev/null || pwd) # a Windows path for node when this is Git Bash
+          for ref in out/squint-seq/*.ref.jsonl; do node models/squint/tools/wasm_run.mjs "${ref%.ref.jsonl}" "$root/out"; done
           node models/squint/tools/compare_api.mjs out/squint-seq wasm
 
   sdk:
