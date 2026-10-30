@@ -31,9 +31,15 @@ and no people.
 
 ## Gaps
 
-No phones as cameras, no other webcams, no printed codes, glossy surfaces, low light or real autofocus. A real-photo
-test set of at least 500 untouched frames from three or more phones and a webcam is required before any release
-([`eval/gates.json`](eval/gates.json)).
+No phones as cameras and no other webcams in the recordings above. No recording holds printed codes, glossy surfaces,
+low light or real autofocus either.
+
+We also tried Squint by hand on a tablet (a Lenovo TB373FU, in an Android app, with the earlier WebAssembly build): with
+printed codes, in low light and on glossy surfaces, and it read them well. Those tries are not data. No frames were saved
+and nothing was counted, so there is no read rate to quote, and they were one device.
+
+A real-photo test set of at least 500 untouched frames from three or more phones and a webcam is required before any
+release ([`eval/gates.json`](eval/gates.json)). It does not exist yet.
 
 ## Retired verifier
 

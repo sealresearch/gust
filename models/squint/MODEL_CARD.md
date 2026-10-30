@@ -70,7 +70,8 @@ average on the desktop above with no budgets (up to 29 ms for the slowest frame 
 ## Limitations
 
 - Not evaluated on an untouched test set, and not validated with real photos from a range of phones and webcams. All
-  recordings come from one webcam and were used during development.
+  recordings come from one webcam and were used during development. By hand on a tablet, with printed codes, in low light and
+  on glossy surfaces, Squint read well, but we saved no frames and counted nothing, so that is an impression, not a result.
 - Not compared with commercial SDKs (Dynamsoft, Scandit) or the readers built into iOS and Android. Timings are desktop CPU
   and one tablet.
 - One code per frame. ECI and kanji modes, empty payloads, Micro QR and versions above 10 are not supported (a code using ECI
