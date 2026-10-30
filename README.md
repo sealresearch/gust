@@ -14,6 +14,7 @@ repository and its weights on [Hugging Face](https://huggingface.co/sealresearch
 | Model | What it does | Size | Weights |
 |---|---|---|---|
 | [Relay 1](models/relay/README.md) | Turns a request and a list of tools into exact function calls | 11.5 MB | [sealresearch/relay](https://huggingface.co/sealresearch/relay), CC BY 4.0 |
+| [Squint 1](models/squint/README.md) (research) | Reads QR codes from shaky, blurred camera frames | none (33 MB of memory) | no weights, MIT |
 
 More will be added here as they are released. Each model lives in its own folder under [`models/`](models/README.md).
 
