@@ -1,6 +1,6 @@
 {
   "name": "@sealresearch/gust",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The Gust model API in Node and in the browser, on WebAssembly: one interface for every model. Bit-identical to the native libraries.",
   "keywords": ["gust", "on-device", "inference", "webassembly", "wasm", "tool-calling", "relay", "model"],
   "license": "MIT",
