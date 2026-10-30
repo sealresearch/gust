@@ -1,0 +1,32 @@
+{
+  "version": "squint-gates-v2",
+  "declaredBeforeTestEvaluation": "2026-10-07",
+  "status": "frozen-initial-protocol",
+  "protocol": "Phase 0 uses development seeds only, never release test/calibration. Validation selects architecture/checkpoints; calibration alone fits thresholds; freeze artifact, adapter, policy and gates hashes before one test run. Post-test changes require a fresh holdout.",
+  "phase0": {"stockAndStrongClassicalSuccessMax": 0.5, "oracleSharpSuccessMin": 0.99, "requireSoftReaderEvidence": true, "requireAllBaselineFamilies": true, "decision": "Missing evidence is inconclusive, never GO."},
+  "gates": [
+    {"id": "read-blur-gain", "blurModules": 1.0, "metric": "successMinusStrongClassical", "min": 0.2},
+    {"id": "clean-regression", "metric": "successMinusStrongClassicalClean", "min": -0.005},
+    {"id": "wrong-payload", "metric": "rsPassingWrongPayloadCount", "max": 0, "minimumAcceptedSyntheticDecodes": 100000, "realWrongPayloadMax": 0, "require": "BCH + RS + same-version/ECC/mask re-encoding agreement; calibration-frozen disagreement and erasure caps; count, denominator and binomial 95% interval"},
+    {"id": "cascade-no-regression", "metric": "baselineCorrectCascadeFailedFrames", "max": 0, "timeoutsCountAsFailures": true},
+    {"id": "bounded-inference", "require": "fixed arenas, bounded candidates/version trials/erasures/work; hostile-input tests; no inference allocations"},
+    {"id": "int8-reference-native-exact", "metric": "mismatchesOnAllEvaluatedFrames", "max": 0},
+    {"id": "wasm-simd-scalar-native-exact", "metric": "mismatchesOnAllEvaluatedFrames", "max": 0},
+    {"id": "preprocessing-reference-parity", "metric": "maxAbsDiff", "max": 1},
+    {"id": "find-weights", "metric": "packedKernelWeightBytes", "max": 65536},
+    {"id": "read-weights", "metric": "packedKernelWeightBytes", "max": 131072},
+    {"id": "find-macs", "metric": "macs", "max": 1000000},
+    {"id": "read-macs", "metric": "macs", "max": 2000000},
+    {"id": "prep-p95", "metric": "warmP95Us", "max": 30},
+    {"id": "find-native-p95", "metric": "warmP95Us", "max": 250},
+    {"id": "read-native-p95", "metric": "warmP95Us", "max": 800},
+    {"id": "rectify-p95", "metric": "warmP95Us", "max": 50},
+    {"id": "decoder-p95", "metric": "warmP95Us", "max": 150},
+    {"id": "fuse-p95", "metric": "warmP95Us", "max": 20},
+    {"id": "rescue-native-p95", "metric": "warmP95Us", "max": 1500},
+    {"id": "rescue-wasm-p95", "metric": "warmP95Us", "max": 3000},
+    {"id": "real-photo", "require": "500+ untouched frames, >=3 phones and 1 webcam, capture-session clusters; mandatory before release"}
+  ],
+  "unresolvedBeforeTraining": ["Find recall gain at a frozen false-positive operating point", "legibility calibration and guidance thresholds"],
+  "releaseAllowed": false
+}

@@ -1,0 +1,782 @@
+{
+ "suffix": ".ref",
+ "totals": {
+  "sequences": 48,
+  "frames": 2154,
+  "accepted": 1721,
+  "wrong": 0,
+  "phantom": 0,
+  "exceptions": 0,
+  "paths": {
+   "Squint acquisition": 187,
+   "Current-image hinted native QR decoder": 1112,
+   "WASM evidence-certified current-image verification": 280,
+   "WASM registered fresh QR decode": 126,
+   "Squint acquisition (lighting-normalized)": 16
+  },
+  "reasons": {
+   "decode-failed": 433
+  }
+ },
+ "sequences": {
+  "blur_beyond_1024x576": {
+   "frames": 56,
+   "accepted": 40,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 15,
+    "WASM evidence-certified current-image verification": 22,
+    "WASM registered fresh QR decode": 1
+   },
+   "reasons": {
+    "decode-failed": 16
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "clock_restart_640x480": {
+   "frames": 56,
+   "accepted": 55,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 53
+   },
+   "reasons": {
+    "decode-failed": 1
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "closeup_large": {
+   "frames": 40,
+   "accepted": 39,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 38
+   },
+   "reasons": {
+    "decode-failed": 1
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "curved_hard": {
+   "frames": 48,
+   "accepted": 48,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 16,
+    "WASM registered fresh QR decode": 6,
+    "WASM evidence-certified current-image verification": 25
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "curved_mild": {
+   "frames": 48,
+   "accepted": 48,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 43,
+    "WASM registered fresh QR decode": 4
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "damage_ramp_640x480": {
+   "frames": 49,
+   "accepted": 28,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 20,
+    "WASM evidence-certified current-image verification": 6,
+    "WASM registered fresh QR decode": 1
+   },
+   "reasons": {
+    "decode-failed": 21
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "defocus_ramp_1024x576": {
+   "frames": 56,
+   "accepted": 30,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 14,
+    "WASM registered fresh QR decode": 3,
+    "WASM evidence-certified current-image verification": 12
+   },
+   "reasons": {
+    "decode-failed": 26
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "distant_small": {
+   "frames": 48,
+   "accepted": 47,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 37,
+    "WASM registered fresh QR decode": 9
+   },
+   "reasons": {
+    "decode-failed": 1
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "ecc_levels_v5_640x480": {
+   "frames": 80,
+   "accepted": 80,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 4,
+    "WASM registered fresh QR decode": 3,
+    "Current-image hinted native QR decoder": 73
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "enter_corner_640x480": {
+   "frames": 40,
+   "accepted": 14,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 10,
+    "WASM registered fresh QR decode": 3
+   },
+   "reasons": {
+    "decode-failed": 26
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "enter_from_left": {
+   "frames": 48,
+   "accepted": 16,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "WASM registered fresh QR decode": 1,
+    "Current-image hinted native QR decoder": 14
+   },
+   "reasons": {
+    "decode-failed": 32
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "glare_sweep": {
+   "frames": 48,
+   "accepted": 29,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 22,
+    "WASM registered fresh QR decode": 1,
+    "Squint acquisition": 1,
+    "WASM evidence-certified current-image verification": 4
+   },
+   "reasons": {
+    "decode-failed": 19
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "junk_interleave_640x480": {
+   "frames": 96,
+   "accepted": 72,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 24,
+    "Current-image hinted native QR decoder": 48
+   },
+   "reasons": {
+    "decode-failed": 24
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "lighting_gradient": {
+   "frames": 48,
+   "accepted": 48,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 43,
+    "WASM registered fresh QR decode": 4
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "noise_then_gamma_1024x576": {
+   "frames": 72,
+   "accepted": 72,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 70
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "occlusion_640x480": {
+   "frames": 48,
+   "accepted": 33,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 20,
+    "WASM evidence-certified current-image verification": 12
+   },
+   "reasons": {
+    "decode-failed": 15
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "reset_mid_640x480": {
+   "frames": 72,
+   "accepted": 72,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 4,
+    "Current-image hinted native QR decoder": 62,
+    "WASM registered fresh QR decode": 6
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "screen_glow_640x480": {
+   "frames": 32,
+   "accepted": 32,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 31
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "seed_twin_a_640x480": {
+   "frames": 40,
+   "accepted": 40,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 5,
+    "WASM evidence-certified current-image verification": 26,
+    "WASM registered fresh QR decode": 8
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "seed_twin_b_640x480": {
+   "frames": 40,
+   "accepted": 33,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "WASM evidence-certified current-image verification": 25,
+    "WASM registered fresh QR decode": 5,
+    "Current-image hinted native QR decoder": 2
+   },
+   "reasons": {
+    "decode-failed": 7
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_1000x562": {
+   "frames": 24,
+   "accepted": 24,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 24
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_320x240": {
+   "frames": 24,
+   "accepted": 24,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 21,
+    "WASM registered fresh QR decode": 2
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_640x479_oddheight": {
+   "frames": 16,
+   "accepted": 16,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 16
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_64x64_min": {
+   "frames": 16,
+   "accepted": 13,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 13
+   },
+   "reasons": {
+    "decode-failed": 3
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_800x600": {
+   "frames": 24,
+   "accepted": 24,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 24
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_big_1920x1080": {
+   "frames": 6,
+   "accepted": 0,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {},
+   "reasons": {
+    "decode-failed": 6
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_narrow_62x64": {
+   "frames": 8,
+   "accepted": 0,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {},
+   "reasons": {
+    "decode-failed": 8
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "size_odd_641x480": {
+   "frames": 16,
+   "accepted": 0,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {},
+   "reasons": {
+    "decode-failed": 16
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "static_sharp_v3": {
+   "frames": 24,
+   "accepted": 24,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 23
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "straight_extreme": {
+   "frames": 36,
+   "accepted": 36,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 8,
+    "WASM evidence-certified current-image verification": 27
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "straight_heavy": {
+   "frames": 36,
+   "accepted": 36,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 8,
+    "WASM registered fresh QR decode": 1,
+    "WASM evidence-certified current-image verification": 26
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "straight_light": {
+   "frames": 36,
+   "accepted": 36,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 33,
+    "WASM registered fresh QR decode": 2
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "straight_medium": {
+   "frames": 36,
+   "accepted": 36,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 1,
+    "Current-image hinted native QR decoder": 9,
+    "WASM registered fresh QR decode": 2,
+    "WASM evidence-certified current-image verification": 24
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "switch_numeric_v5_640x480": {
+   "frames": 48,
+   "accepted": 43,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 13,
+    "WASM registered fresh QR decode": 6,
+    "WASM evidence-certified current-image verification": 23
+   },
+   "reasons": {
+    "decode-failed": 5
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "switch_onechar_v3_640x480": {
+   "frames": 48,
+   "accepted": 46,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 16,
+    "WASM registered fresh QR decode": 12,
+    "WASM evidence-certified current-image verification": 17
+   },
+   "reasons": {
+    "decode-failed": 2
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "switch_static_sharp_640x480": {
+   "frames": 24,
+   "accepted": 24,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 23
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "switch_toggle_corpus_640x480": {
+   "frames": 44,
+   "accepted": 34,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 7,
+    "WASM registered fresh QR decode": 11,
+    "Current-image hinted native QR decoder": 14,
+    "WASM evidence-certified current-image verification": 2
+   },
+   "reasons": {
+    "decode-failed": 10
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "switch_version_2to4_640x480": {
+   "frames": 48,
+   "accepted": 42,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 3,
+    "Current-image hinted native QR decoder": 32,
+    "WASM registered fresh QR decode": 4,
+    "WASM evidence-certified current-image verification": 3
+   },
+   "reasons": {
+    "decode-failed": 6
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "tilt_ramp_1024x576": {
+   "frames": 56,
+   "accepted": 56,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "Current-image hinted native QR decoder": 22,
+    "WASM registered fresh QR decode": 15,
+    "WASM evidence-certified current-image verification": 18
+   },
+   "reasons": {},
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "tilt_shake_640x480": {
+   "frames": 40,
+   "accepted": 38,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 1,
+    "WASM registered fresh QR decode": 15,
+    "Current-image hinted native QR decoder": 14,
+    "WASM evidence-certified current-image verification": 8
+   },
+   "reasons": {
+    "decode-failed": 2
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "timing_irregular_640x480": {
+   "frames": 64,
+   "accepted": 63,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 60,
+    "WASM registered fresh QR decode": 1
+   },
+   "reasons": {
+    "decode-failed": 1
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "vanish_long_gap_640x480": {
+   "frames": 135,
+   "accepted": 35,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 33
+   },
+   "reasons": {
+    "decode-failed": 100
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "vanish_reappear_640x480": {
+   "frames": 120,
+   "accepted": 67,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 4,
+    "Current-image hinted native QR decoder": 63
+   },
+   "reasons": {
+    "decode-failed": 53
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "versions_01_02_640x480": {
+   "frames": 32,
+   "accepted": 30,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 28
+   },
+   "reasons": {
+    "decode-failed": 2
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "versions_03_04_640x480": {
+   "frames": 32,
+   "accepted": 30,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 28
+   },
+   "reasons": {
+    "decode-failed": 2
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "versions_05_06_640x480": {
+   "frames": 32,
+   "accepted": 30,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 2,
+    "Current-image hinted native QR decoder": 28
+   },
+   "reasons": {
+    "decode-failed": 2
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "versions_07_08_640x480": {
+   "frames": 32,
+   "accepted": 19,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition": 19
+   },
+   "reasons": {
+    "decode-failed": 13
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  },
+  "versions_09_10_1280x720": {
+   "frames": 32,
+   "accepted": 19,
+   "wrong": 0,
+   "phantom": 0,
+   "exceptions": 0,
+   "paths": {
+    "Squint acquisition (lighting-normalized)": 6,
+    "Squint acquisition": 13
+   },
+   "reasons": {
+    "decode-failed": 13
+   },
+   "wrongFrames": [],
+   "phantomFrames": []
+  }
+ }
+}

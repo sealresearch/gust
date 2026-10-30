@@ -1,0 +1,56 @@
+{
+ "date": "2026-10-21",
+ "what": "Every frame of the five webcam recordings, in order, through Squint.read() (tracker + acquisition, demo settings) with unlimited time budgets so the run is deterministic: the previous Gust package (built with the earlier Gust runtime) against this package. A frame counts as the same when accepted, payload and corners (3 decimals) all match. The expected payload is read by the scorer only after each frame returns.",
+ "frames": 3918,
+ "same": 3918,
+ "different": 0,
+ "read": 2744,
+ "wrong": 0,
+ "perVideo": {
+  "user-1791391568109": {
+   "frames": 693,
+   "same": 693,
+   "diff": 0,
+   "oldRead": 650,
+   "newRead": 650,
+   "oldWrong": 0,
+   "newWrong": 0
+  },
+  "motion-1791479164497": {
+   "frames": 899,
+   "same": 899,
+   "diff": 0,
+   "oldRead": 807,
+   "newRead": 807,
+   "oldWrong": 0,
+   "newWrong": 0
+  },
+  "enter-1791488093191": {
+   "frames": 900,
+   "same": 900,
+   "diff": 0,
+   "oldRead": 586,
+   "newRead": 586,
+   "oldWrong": 0,
+   "newWrong": 0
+  },
+  "heldout-1791476412638": {
+   "frames": 848,
+   "same": 848,
+   "diff": 0,
+   "oldRead": 361,
+   "newRead": 361,
+   "oldWrong": 0,
+   "newWrong": 0
+  },
+  "heldout-1791479129330": {
+   "frames": 578,
+   "same": 578,
+   "diff": 0,
+   "oldRead": 340,
+   "newRead": 340,
+   "oldWrong": 0,
+   "newWrong": 0
+  }
+ }
+}

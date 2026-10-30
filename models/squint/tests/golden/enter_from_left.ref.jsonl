@@ -1,0 +1,48 @@
+{"i":0,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":1,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":2,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":3,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":4,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":5,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":6,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":7,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":8,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":9,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":10,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":11,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":12,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":13,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":14,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":15,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":16,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":17,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":18,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":19,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":20,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":21,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":22,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":23,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":24,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":25,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":26,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":27,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":28,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":29,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":30,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":31,"accepted":false,"reason":"decode-failed","path":null,"version":null,"payload":null,"corners":null}
+{"i":32,"accepted":true,"reason":null,"path":"Squint acquisition (lighting-normalized)","version":4,"payload":"3030313233343536373839","corners":["408121d1a2ffde73","406fd886bd8b7fab","4086b9af7132740a","406fe71bc4975ba3","4086af4890d01429","407b173db465ae55","40811fb84cb128dc","407b128af22282c6"]}
+{"i":33,"accepted":true,"reason":null,"path":"WASM registered fresh QR decode","version":4,"payload":"3030313233343536373839","corners":["408114e2097228e1","406fa04709a4bda9","4086b8436ce64f66","406fa82fdd37a42f","4086b33c8a5e3d10","407b1a9b4bcc6021","40811094d212bd5d","407b161beb6bbc2a"]}
+{"i":34,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["408103a324ffb5fe","406f5c58c82edaa3","4086a6f7a2b5c1db","406f633919a72ef9","4086a2c1b73b5982","407af8060270c3fb","40810026d8ed0124","407af40ad36058fd"]}
+{"i":35,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080f47548207fdf","406f1a663605ae2f","408697afd5787f6f","406f1eef24dfca71","4086955370703efe","407ad5ace7840b5f","4080f2d26849a0c2","407ad2dd45c76b9e"]}
+{"i":36,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e6f567d2e609","406eda2127c91826","40868a07adce2d76","406ede756228168e","408687d4e3d775e2","407ab51f7383b5f2","4080e57c1bde4222","407ab26a2c869fc8"]}
+{"i":37,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080dcffe911739c","406e9ab74dd1cfb0","40868032d072be22","406e9d5e9e72ce2c","40867f52eaf1a094","407a94d52485e694","4080dcd975639f28","407a92f633b5fa01"]}
+{"i":38,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080d6ccdb26b85f","406e5d9438b44bad","40867a2ed11acc2a","406e5f468949b755","40867a1086118d6c","407a76271a718a72","4080d767fea19114","407a74c2955ff18c"]}
+{"i":39,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080d6672a29ce92","406e284302d0a842","408679bacdd7652e","406e27173ec0eb15","40867be076754cd6","407a59f281b5fb68","4080d946236f1ca8","407a59fcd93615ac"]}
+{"i":40,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080da5547ce65b6","406dfbd20b4f9e2c","40867d5ad46f01b2","406df820d26b23d8","4086817e5e445901","407a41dadaf88997","4080df31ffa0049e","407a4327cafc6842"]}
+{"i":41,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080dfd20373905a","406dd6798c85ac8b","408682979a992036","406dd1cd049983c5","40868781a2c3b876","407a2e30f0b6b331","4080e57527cbbcf4","407a2ffb7e496ca3"]}
+{"i":42,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e53761bbbfdc","406dbdcf2ceecf85","4086882b905eea02","406db883ff27b74a","40868d92f9cde99c","407a21e989b492ae","4080eb57e745b938","407a24035b844f40"]}
+{"i":43,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e8ab704116e9","406dbd3876d35c39","40868b912d53ce45","406db5cf02174886","408692a5015da664","407a2071edebd4ca","4080f07849d79c60","407a239ac1c9274a"]}
+{"i":44,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e9804e2ba381","406dd23fc43fcef5","40868cb567dcc99a","406dc9009710844c","4086953c67f5beae","407a2aa93b3550ed","4080f2c04c1411c2","407a2ebcc5779d20"]}
+{"i":45,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e7513fdf867d","406df4d65ae7b131","40868ae578215a06","406dea5c479941aa","408694655669bc98","407a3c152a3e9a46","4080f18a1c293ea1","407a40c60a2712fd"]}
+{"i":46,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080e387c11a8ff1","406e2047c71021f2","408687633bf3d5d5","406e161e009a9563","408690a3b8a54436","407a528491759cc5","4080ed814804e0ae","407a570d4936e754"]}
+{"i":47,"accepted":true,"reason":null,"path":"Current-image hinted native QR decoder","version":4,"payload":"3030313233343536373839","corners":["4080dea5c8681899","406e53d1802d0542","4086828f540165ec","406e483f06dfa129","40868ceccc7ce9cf","407a6bb10e611500","4080e9bc3f25f93a","407a70ee07090931"]}

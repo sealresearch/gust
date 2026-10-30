@@ -1,0 +1,40 @@
+{
+ "date": "2026-10-21",
+ "what": "eval/safety-suites.mjs and eval/motion-switch-safety.mjs on this package, unlimited budget, fixtures from the private generators. The previous Gust package gives identical results on the same fixtures (motion-switch: same counts, paths and failures).",
+ "verifySwitch": {
+  "checks": 196,
+  "matched": 72,
+  "wrong": 0
+ },
+ "blurredSwitch": {
+  "sequences": 72,
+  "checks": 144,
+  "changedDecoded": 24,
+  "wrong": 0,
+  "stale": 0
+ },
+ "revealedSwitch": {
+  "sequences": 12,
+  "checks": 24,
+  "anchorsAccepted": 12,
+  "currentDecoded": 0,
+  "wrong": 0,
+  "stale": 0
+ },
+ "motionSwitch": {
+  "sequences": 160,
+  "checks": 2560,
+  "beforeSwitch": 1377,
+  "beforeDecoded": 1322,
+  "afterSwitch": 1183,
+  "afterSwitchDecoded": 249,
+  "wrong": 0,
+  "stale": 0,
+  "perPath": {
+   "Squint acquisition": 176,
+   "Current-image hinted native QR decoder": 470,
+   "WASM evidence-certified current-image verification": 597,
+   "WASM registered fresh QR decode": 328
+  }
+ }
+}
